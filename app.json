@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/history/history",
+    "pages/seasons/seasons"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "游戏分数记录",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "记录分数"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "历史记录"
+      },
+      {
+        "pagePath": "pages/seasons/seasons",
+        "text": "赛季管理"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

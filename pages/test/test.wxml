@@ -1,0 +1,75 @@
+<view class="container">
+  <text class="title">Picker 组件测试</text>
+  
+  <view class="test-section">
+    <text class="section-title">1. 日期时间选择器 (datetime)</text>
+    <view class="test-content">
+      <picker mode="datetime" value="{{datetimeValue}}" start="2020-01-01" end="2030-12-31" bindchange="onDatetimeChange">
+        <view class="picker-view">
+          {{datetimeValue ? formatTime(datetimeValue) : '请选择日期时间'}}
+        </view>
+      </picker>
+      <text class="value-display">当前值: {{datetimeValue}}</text>
+    </view>
+  </view>
+  
+  <view class="test-section">
+    <text class="section-title">2. 日期选择器 (date)</text>
+    <view class="test-content">
+      <picker mode="date" value="{{dateValue}}" start="2020-01-01" end="2030-12-31" bindchange="onDateChange">
+        <view class="picker-view">
+          {{dateValue ? dateValue : '请选择日期'}}
+        </view>
+      </picker>
+      <text class="value-display">当前值: {{dateValue}}</text>
+    </view>
+  </view>
+  
+  <view class="test-section">
+    <text class="section-title">3. 时间选择器 (time)</text>
+    <view class="test-content">
+      <picker mode="time" value="{{timeValue}}" start="00:00" end="23:59" bindchange="onTimeChange">
+        <view class="picker-view">
+          {{timeValue ? timeValue : '请选择时间'}}
+        </view>
+      </picker>
+      <text class="value-display">当前值: {{timeValue}}</text>
+    </view>
+  </view>
+  
+  <view class="test-section">
+    <text class="section-title">4. 普通选择器 (selector)</text>
+    <view class="test-content">
+      <picker range="{{array}}" value="{{index}}" bindchange="onArrayChange">
+        <view class="picker-view">
+          {{array[index]}}
+        </view>
+      </picker>
+      <text class="value-display">当前索引: {{index}}</text>
+    </view>
+  </view>
+  
+  <view class="test-section">
+    <text class="section-title">5. 多列选择器 (multiSelector)</text>
+    <view class="test-content">
+      <picker mode="multiSelector" range="{{multiArray}}" value="{{multiIndex}}" bindchange="onMultiChange" bindcolumnchange="onMultiColumnChange">
+        <view class="picker-view">
+          {{multiArray[0][multiIndex[0]]}} - {{multiArray[1][multiIndex[1]]}} - {{multiArray[2][multiIndex[2]]}}
+        </view>
+      </picker>
+      <text class="value-display">当前值: {{multiIndex}}</text>
+    </view>
+  </view>
+  
+  <view class="test-section">
+    <text class="section-title">6. 修复后的日期时间选择器</text>
+    <view class="test-content">
+      <view class="picker-view" bindtap="showDateTimePicker">
+        {{fixedDatetimeValue ? formatTime(fixedDatetimeValue) : '请选择日期时间'}}
+      </view>
+      <picker-view class="picker-popup" wx:if="{{showPicker}}" value="{{pickerValue}}" range="{{pickerRange}}" start="2020-01-01" end="2030-12-31" mode="datetime" bindchange="onFixedDatetimeChange" bindcancel="hideDateTimePicker">
+      </picker-view>
+      <text class="value-display">当前值: {{fixedDatetimeValue}}</text>
+    </view>
+  </view>
+</view>

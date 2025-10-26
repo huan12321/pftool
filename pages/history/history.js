@@ -1,0 +1,416 @@
+const app = getApp();
+
+Page({
+  data: {
+    seasons: [],
+    currentSeasonId: '',
+    currentSeasonName: '',
+    records: [],
+    analyzedRecords: [],
+    editDialogVisible: false,
+    currentEditRecord: null,
+    editScore: '',
+    viewMode: 'streak', // 'streak' 或 'hourly'
+    hourlyStats: [] // 分时段统计数据
+  },
+
+  onLoad() {
+    this.loadSeasons();
+  },
+
+  onShow() {
+    this.loadSeasons();
+  },
+
+  loadSeasons() {
+    const seasons = wx.getStorageSync('seasons') || [];
+    let currentSeasonId = wx.getStorageSync('currentSeasonId');
+    let currentSeasonName = '';
+    
+    if (!currentSeasonId && seasons.length > 0) {
+      currentSeasonId = seasons[0].id;
+      wx.setStorageSync('currentSeasonId', currentSeasonId);
+    }
+    
+    for (let i = 0; i < seasons.length; i++) {
+      if (seasons[i].id === currentSeasonId) {
+        currentSeasonName = seasons[i].name;
+        break;
+      }
+    }
+    
+    this.setData({
+      seasons,
+      currentSeasonId,
+      currentSeasonName
+    }, () => {
+      this.loadRecords();
+    });
+  },
+
+  loadRecords() {
+    if (!this.data.currentSeasonId) return;
+    
+    const records = wx.getStorageSync('records') || {};
+    let seasonRecords = records[this.data.currentSeasonId] || [];
+    
+    // 过滤掉初始记录（时间戳为0的记录）
+    seasonRecords = seasonRecords.filter(record => record.timestamp !== 0);
+    
+    // 按时间倒序排列
+    seasonRecords.sort((a, b) => b.timestamp - a.timestamp);
+    
+    // 分析连胜连败
+    const analyzedRecords = this.analyzeStreaks(seasonRecords);
+    
+    // 计算分时段统计数据
+    const hourlyStats = this.calculateHourlyStats(seasonRecords);
+    
+    this.setData({
+      records: seasonRecords,
+      analyzedRecords,
+      hourlyStats
+    });
+  },
+
+  // 计算分时段统计数据
+calculateHourlyStats(records) {
+  const stats = {};
+  
+  records.forEach(record => {
+    if (!record.time) return;
+    
+    // 解析时间字符串
+    const dateTime = record.time.replace('T', ' ');
+    const date = new Date(dateTime);
+    
+    // 获取星期几 (0-6, 0是周日)
+    const dayOfWeek = date.getDay();
+    // 获取小时 (0-23)
+    const hour = date.getHours();
+    
+    // 判断是工作日还是周末
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0:周日, 6:周六
+    const dayType = isWeekend ? 'weekend' : 'weekday';
+    
+    // 生成唯一键
+    const key = `${dayType}_${hour}`;
+    
+    if (!stats[key]) {
+      // 直接在这里生成显示文本
+      const timeDesc = isWeekend 
+        ? `周末 ${hour}:00-${hour + 1}:00`
+        : `工作日 ${hour}:00-${hour + 1}:00`;
+      
+      stats[key] = {
+        dayType: dayType,
+        hour: hour,
+        timeDesc: timeDesc, // 新增：直接存储显示文本
+        total: 0,
+        win: 0,
+        lose: 0,
+        winRate: 0,
+        loseRate: 0
+      };
+    }
+    
+// 判断胜负（分数增加为胜，减少为败）
+// 修正后的逻辑：
+const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
+const currentIndex = sortedRecords.findIndex(r => r.id === record.id);
+
+if (currentIndex > 0) {
+  const prevRecord = sortedRecords[currentIndex - 1]; // 前一条记录
+  if (prevRecord) {
+    const isWin = record.score > prevRecord.score;
+    const isLose = record.score < prevRecord.score;
+    
+    stats[key].total++;
+    if (isWin) stats[key].win++;
+    if (isLose) stats[key].lose++;
+  } else {
+    // 如果是第一条记录，无法判断胜负，只计数
+    stats[key].total++;
+  }
+} else {
+  // 第一条记录，无法判断胜负，只计数
+  stats[key].total++;
+}
+  });
+  
+  // 计算胜率败率并转换为数组
+  const result = Object.values(stats).map(stat => {
+    if (stat.total > 0) {
+      stat.winRate = Math.round((stat.win / stat.total) * 100);
+      stat.loseRate = Math.round((stat.lose / stat.total) * 100);
+    }
+    return stat;
+  });
+  
+  // 按时间段排序：先工作日后周末，再按小时排序
+  result.sort((a, b) => {
+    if (a.dayType !== b.dayType) {
+      return a.dayType === 'weekday' ? -1 : 1;
+    }
+    return a.hour - b.hour;
+  });
+  
+  return result;
+},
+
+  // 切换查看模式
+  switchViewMode(e) {
+    const mode = e.currentTarget.dataset.mode;
+    this.setData({
+      viewMode: mode
+    });
+  },
+
+  analyzeStreaks(records) {
+    if (records.length <= 1) return records.map(r => ({...r, streak: ''}));
+    
+    const sortedByTime = [...records].sort((a, b) => a.timestamp - b.timestamp);
+    const streakCounts = new Array(sortedByTime.length).fill(0);
+    const streakTypes = new Array(sortedByTime.length).fill('');
+    
+    // 计算每场比赛的连胜连败数
+    for (let i = 1; i < sortedByTime.length; i++) {
+      const curr = sortedByTime[i];
+      const prev = sortedByTime[i - 1];
+      
+      if (curr.score > prev.score) {
+        if (streakTypes[i - 1] === 'win') {
+          streakCounts[i] = streakCounts[i - 1] + 1;
+        } else {
+          streakCounts[i] = 1;
+        }
+        streakTypes[i] = 'win';
+      } else if (curr.score < prev.score) {
+        if (streakTypes[i - 1] === 'lose') {
+          streakCounts[i] = streakCounts[i - 1] + 1;
+        } else {
+          streakCounts[i] = 1;
+        }
+        streakTypes[i] = 'lose';
+      }
+    }
+    
+    // 只在连胜/连败的最高点显示标记
+    const streaks = new Array(sortedByTime.length).fill('');
+    for (let i = 0; i < sortedByTime.length; i++) {
+      if (streakCounts[i] > 0 && 
+          (i === sortedByTime.length - 1 || streakCounts[i + 1] <= streakCounts[i])) {
+        streaks[i] = `${streakTypes[i] === 'win' ? '连胜' : '连败'}${streakCounts[i]}场`;
+      }
+    }
+    
+    const streakMap = {};
+    for (let i = 0; i < sortedByTime.length; i++) {
+      streakMap[sortedByTime[i].id] = streaks[i];
+    }
+    
+    return records.map(record => {
+      const streak = streakMap[record.id] || '';
+      let streakType = '';
+      
+      if (streak) {
+        if (streak.includes('连胜')) {
+          streakType = 'win';
+        } else if (streak.includes('连败')) {
+          streakType = 'lose';
+        }
+      }
+      
+      return {
+        ...record,
+        streak: streak,
+        streakType: streakType
+      };
+    });
+  },
+
+  // 导出CSV文件
+  exportToCSV() {
+    if (this.data.records.length === 0) {
+      wx.showToast({
+        title: '没有数据可导出',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 根据当前视图模式导出不同数据
+    let csvContent = '';
+    if (this.data.viewMode === 'streak') {
+      csvContent = this.generateStreakCSV();
+    } else {
+      csvContent = this.generateHourlyStatsCSV();
+    }
+    
+    // 复制到剪贴板
+    wx.setClipboardData({
+      data: csvContent,
+      success: () => {
+        wx.showToast({
+          title: '数据已复制到剪贴板',
+          icon: 'success'
+        });
+      },
+      fail: () => {
+        wx.showToast({
+          title: '复制失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 生成连胜连败CSV内容
+  generateStreakCSV() {
+    const records = [...this.data.records].sort((a, b) => a.timestamp - b.timestamp);
+    
+    let csv = '时间,分数,连胜连败状态\n';
+    
+    records.forEach(record => {
+      const time = record.time;
+      const score = record.score;
+      const streak = record.streak || '';
+      
+      csv += `${time},${score},${streak}\n`;
+    });
+    
+    return csv;
+  },
+
+  // 生成分时段统计CSV内容
+  generateHourlyStatsCSV() {
+    let csv = '时间段,总场数,胜利场数,失败场数,胜率,败率\n';
+    
+    this.data.hourlyStats.forEach(stat => {
+      const timeDesc = stat.dayType === 'weekday' 
+        ? `工作日 ${stat.hour}:00-${stat.hour + 1}:00`
+        : `周末 ${stat.hour}:00-${stat.hour + 1}:00`;
+      
+      csv += `${timeDesc},${stat.total},${stat.win},${stat.lose},${stat.winRate}%,${stat.loseRate}%\n`;
+    });
+    
+    return csv;
+  },
+
+  onSeasonChange(e) {
+    const seasonId = e.detail.value;
+    wx.setStorageSync('currentSeasonId', seasonId);
+    this.setData({
+      currentSeasonId: seasonId
+    }, () => {
+      this.loadRecords();
+    });
+  },
+  
+  editRecord(e) {
+    const recordId = e.currentTarget.dataset.id;
+    const record = this.data.records.find(r => r.id === recordId);
+    
+    if (record) {
+      this.setData({
+        editDialogVisible: true,
+        currentEditRecord: record,
+        editScore: record.score.toString()
+      });
+    }
+  },
+  
+  cancelEdit() {
+    this.setData({
+      editDialogVisible: false,
+      currentEditRecord: null,
+      editScore: ''
+    });
+  },
+  
+  onEditScoreChange(e) {
+    this.setData({
+      editScore: e.detail.value
+    });
+  },
+  
+  confirmEdit() {
+    if (!this.data.currentEditRecord) return;
+    
+    const score = parseInt(this.data.editScore);
+    if (isNaN(score) || score < 0 || score > 10000) {
+      wx.showToast({
+        title: '请输入0-10000之间的数字',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    const records = wx.getStorageSync('records') || {};
+    const seasonId = this.data.currentSeasonId;
+    
+    if (records[seasonId]) {
+      const recordIndex = records[seasonId].findIndex(r => r.id === this.data.currentEditRecord.id);
+      
+      if (recordIndex !== -1) {
+        records[seasonId][recordIndex].score = score;
+        wx.setStorageSync('records', records);
+        
+        this.setData({
+          records: records[seasonId]
+        });
+        
+        const analyzedRecords = this.analyzeStreaks(records[seasonId]);
+        const hourlyStats = this.calculateHourlyStats(records[seasonId]);
+        this.setData({
+          analyzedRecords,
+          hourlyStats
+        });
+        
+        this.cancelEdit();
+        
+        wx.showToast({
+          title: '记录已更新',
+          icon: 'success'
+        });
+      }
+    }
+  },
+  
+  deleteRecord(e) {
+    const recordId = e.currentTarget.dataset.id;
+    const that = this;
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条记录吗？',
+      success(res) {
+        if (res.confirm) {
+          const records = wx.getStorageSync('records') || {};
+          const seasonId = that.data.currentSeasonId;
+          
+          if (records[seasonId]) {
+            records[seasonId] = records[seasonId].filter(r => r.id !== recordId);
+            wx.setStorageSync('records', records);
+            
+            that.setData({
+              records: records[seasonId]
+            });
+            
+            const analyzedRecords = that.analyzeStreaks(records[seasonId]);
+            const hourlyStats = that.calculateHourlyStats(records[seasonId]);
+            that.setData({
+              analyzedRecords,
+              hourlyStats
+            });
+            
+            wx.showToast({
+              title: '记录已删除',
+              icon: 'success'
+            });
+          }
+        }
+      }
+    });
+  }
+});

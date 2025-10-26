@@ -1,0 +1,99 @@
+<wxs module="utils">
+function formatTime(timeStr) {
+  if (!timeStr) return '';
+  var date = getDate(timeStr);
+  var year = date.getFullYear();
+  var month = (date.getMonth() + 1).toString().padStart(2, '0');
+  var day = date.getDate().toString().padStart(2, '0');
+  var hours = date.getHours().toString().padStart(2, '0');
+  var minutes = date.getMinutes().toString().padStart(2, '0');
+  return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
+}
+module.exports = {
+  formatTime: formatTime
+}
+</wxs>
+
+<view class="container">
+  <view class="section-title">创建新赛季</view>
+  
+  <view class="input-group">
+    <text class="label">赛季名称：</text>
+    <input 
+      type="text" 
+      placeholder="输入赛季名称" 
+      value="{{newSeasonName}}"
+      bindinput="handleNameInput"
+    />
+  </view>
+  
+  <view class="input-group">
+    <text class="label">初始分数：</text>
+    <input 
+      type="number" 
+      placeholder="0-10000" 
+      value="{{newSeasonInitialScore}}"
+      bindinput="handleInitialScoreInput"
+      min="0"
+      max="10000"
+    />
+  </view>
+  
+  <button class="create-btn" bindtap="createSeason">创建赛季</button>
+  
+  <!-- 导入按钮 -->
+  <view class="import-section">
+    <button class="import-btn" bindtap="importData">导入数据</button>
+    <text class="import-hint">支持从CSV文件导入赛季和记录数据</text>
+  </view>
+  
+  <view class="section-title">已创建赛季</view>
+  
+  <view class="seasons-list">
+    <view wx:for="{{seasons}}" wx:key="id" class="season-item">
+      <view class="season-info">
+        <view class="season-name">{{item.name}}</view>
+        <view class="season-details">
+          <view class="season-id" bindtap="copySeasonId" data-id="{{item.id}}">
+            ID: {{item.id}}
+            <text class="copy-hint">点击复制</text>
+          </view>
+          <view class="season-detail">初始分数: {{item.initialScore}}</view>
+          <view class="season-detail">创建时间: {{utils.formatTime(item.createTime)}}</view>
+          <view class="season-stats">
+            <text class="stats-text">
+              记录数: {{item.recordCount}}
+            </text>
+          </view>
+        </view>
+      </view>
+      <view class="season-actions">
+        <button 
+          class="action-btn set-current {{wx.getStorageSync('currentSeasonId') === item.id ? 'active' : ''}}"
+          bindtap="setAsCurrent"
+          data-id="{{item.id}}"
+        >
+          {{wx.getStorageSync('currentSeasonId') === item.id ? '当前赛季' : '设为当前'}}
+        </button>
+        <button 
+          class="action-btn export"
+          bindtap="exportSeasonData"
+          data-id="{{item.id}}"
+        >
+          导出
+        </button>
+        <button 
+          class="action-btn delete"
+          bindtap="deleteSeason"
+          data-id="{{item.id}}"
+        >
+          删除
+        </button>
+      </view>
+    </view>
+    
+    <view wx:if="{{seasons.length === 0}}" class="empty-hint">
+      暂无赛季，请创建新赛季或导入数据
+    </view>
+  </view>
+</view>

@@ -1,0 +1,64 @@
+<view class="container">
+  <view class="season-bar" bindtap="goToSeasons">
+    <text>当前赛季: {{currentSeason ? currentSeason.name : '未选择赛季'}}</text>
+    <text class="arrow">→</text>
+  </view>
+
+  <view class="score-display">
+  <text class="title">当前分数</text>
+  <view class="score-row">
+    <text class="score">{{currentScore}}</text>
+    <view class="change-display" wx:if="{{changeValue !== 0}}">
+      <span class="change-text {{changeValue > 0 ? 'positive' : 'negative'}}">
+        {{changeValue > 0 ? '+' : ''}}{{changeValue}} = {{displayScore}}
+      </span>
+    </view>
+  </view>
+</view>
+
+  <view class="score-input-section">
+    <text class="section-title">直接输入分数</text>
+    <view class="input-group">
+      <input 
+        type="number" 
+        placeholder="输入分数(0-10000)" 
+        value="{{inputScore}}"
+        bindinput="handleInputScore"
+        maxlength="5"
+      />
+      <button bindtap="confirmInputScore" class="confirm-btn">确认</button>
+    </view>
+  </view>
+
+  <view class="operation-section">
+    <text class="section-title">快捷操作</text>
+    <view class="operation-buttons">
+      <button 
+        wx:for="{{operationButtons}}" 
+        wx:key="index"
+        data-value="{{item.value}}"
+        bindtap="handleOperation"
+        class="op-btn {{item.value > 0 ? 'positive' : 'negative'}} {{changeValue === item.value ? 'active' : ''}}"
+      >
+        {{item.label}}
+      </button>
+    </view>
+  </view>
+
+  <view class="time-section">
+    <text class="section-title">时间</text>
+    <view class="time-input-group">
+      <input 
+        type="text" 
+        placeholder="YYYY-MM-DD HH:MM" 
+        value="{{currentTime}}"
+        bindinput="handleTimeInput"
+        maxlength="16"
+        class="time-input"
+      />
+    </view>
+    <text class="time-format-hint">格式: YYYY-MM-DD HH:MM</text>
+  </view>
+
+  <button class="save-btn" bindtap="saveRecord">保存记录</button>
+</view>

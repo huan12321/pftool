@@ -1,0 +1,109 @@
+<view class="container">
+  <view class="season-selector">
+    <picker value="{{currentSeasonId}}" range="{{seasons}}" range-key="name" bindchange="onSeasonChange">
+      <view class="picker-view">
+        当前赛季: {{currentSeasonName || '请选择赛季'}}
+      </view>
+    </picker>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="view-mode-switcher">
+    <view class="mode-buttons">
+      <button 
+        class="mode-btn {{viewMode === 'streak' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="streak"
+      >
+        连胜连败
+      </button>
+      <button 
+        class="mode-btn {{viewMode === 'hourly' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="hourly"
+      >
+        分时段胜率
+      </button>
+    </view>
+    <button class="export-btn" bindtap="exportToCSV">导出数据</button>
+  </view>
+
+  <!-- 连胜连败列表 -->
+  <view wx:if="{{viewMode === 'streak'}}" class="history-list">
+    <view class="list-header">
+      <view class="header-item time">时间</view>
+      <view class="header-item score">分数</view>
+      <view class="header-item streak">状态</view>
+      <view class="header-item action">操作</view>
+    </view>
+    
+    <view wx:for="{{analyzedRecords}}" wx:key="id" class="record-item">
+      <view class="record-field time">{{item.time}}</view>
+      <view class="record-field score">{{item.score}}</view>
+      <view class="record-field streak">
+        <span wx:if="{{item.streak}}" class="{{item.streakType}}">
+          {{item.streak}}
+        </span>
+      </view>
+      <view class="record-field action">
+        <button bindtap="editRecord" data-id="{{item.id}}" class="edit-btn">编辑</button>
+        <button bindtap="deleteRecord" data-id="{{item.id}}" class="delete-btn">删除</button>
+      </view>
+    </view>
+    
+    <view wx:if="{{analyzedRecords.length === 0}}" class="empty-hint">
+      暂无记录
+    </view>
+  </view>
+
+  <!-- 分时段胜率统计 -->
+<view wx:if="{{viewMode === 'hourly'}}" class="hourly-stats">
+  <view class="stats-header">
+    <view class="stats-column time-slot">时间段</view>
+    <view class="stats-column total">总场数</view>
+    <view class="stats-column win">胜率</view>
+    <view class="stats-column lose">败率</view>
+  </view>
+  
+  <view wx:for="{{hourlyStats}}" wx:key="{{item.dayType + item.hour}}" class="stats-item">
+    <view class="stats-field time-slot">{{item.timeDesc}}</view>
+    <view class="stats-field total">{{item.total}}</view>
+    <view class="stats-field win">
+      <text wx:if="{{item.total > 0}}" class="win-rate">{{item.winRate}}%</text>
+      <text wx:else>-</text>
+    </view>
+    <view class="stats-field lose">
+      <text wx:if="{{item.total > 0}}" class="lose-rate">{{item.loseRate}}%</text>
+      <text wx:else>-</text>
+    </view>
+  </view>
+  
+  <view wx:if="{{hourlyStats.length === 0}}" class="empty-hint">
+    暂无统计数据
+  </view>
+</view>
+  
+  <!-- 编辑对话框 -->
+  <view wx:if="{{editDialogVisible}}" class="dialog-mask">
+    <view class="dialog-container">
+      <view class="dialog-title">编辑分数</view>
+      <view class="dialog-content">
+        <view class="dialog-info">时间: {{currentEditRecord.time.replace('T', ' ')}}</view>
+        <view class="dialog-input">
+          <input 
+            type="number" 
+            placeholder="输入新分数" 
+            value="{{editScore}}"
+            bindinput="onEditScoreChange"
+            min="0"
+            max="10000"
+          />
+        </view>
+      </view>
+      <view class="dialog-buttons">
+        <button bindtap="cancelEdit" class="dialog-btn cancel">取消</button>
+        <button bindtap="confirmEdit" class="dialog-btn confirm">确认</button>
+      </view>
+    </view>
+  </view>
+</view>

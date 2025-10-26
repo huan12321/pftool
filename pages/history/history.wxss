@@ -1,0 +1,301 @@
+.container {
+  padding: 20rpx;
+}
+
+.season-selector {
+  margin-bottom: 20rpx;
+}
+
+.picker-view {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+/* 模式切换器 */
+.view-mode-switcher {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+  gap: 20rpx;
+}
+
+.mode-buttons {
+  display: flex;
+  flex: 1;
+  gap: 10rpx;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 20rpx;
+  font-size: 26rpx;
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+}
+
+.mode-btn.active {
+  background-color: #1677ff;
+  color: white;
+  border-color: #1677ff;
+}
+
+.export-btn {
+  padding: 20rpx 30rpx;
+  font-size: 26rpx;
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  white-space: nowrap;
+}
+
+/* 连胜连败列表样式 */
+.history-list {
+  border: 1px solid #eee;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.list-header {
+  display: flex;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #eee;
+}
+
+.header-item {
+  padding: 15rpx;
+  font-weight: bold;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.time {
+  flex: 4;
+}
+
+.score {
+  flex: 1;
+}
+
+.streak {
+  flex: 2;
+}
+
+.action {
+  flex: 2;
+}
+
+.record-item {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 15rpx;
+  font-size: 28rpx;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-field {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win {
+  color: #07c160;
+  font-weight: bold;
+}
+
+.lose {
+  color: #f53f3f;
+  font-weight: bold;
+}
+
+/* 分时段统计样式 */
+.hourly-stats {
+  border: 1px solid #eee;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.stats-header {
+  display: flex;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
+  font-size: 28rpx;
+}
+
+.stats-column {
+  padding: 15rpx;
+  text-align: center;
+}
+
+.time-slot {
+  flex: 3;
+}
+
+.total {
+  flex: 1;
+}
+
+.win {
+  flex: 1;
+}
+
+.lose {
+  flex: 1;
+}
+
+.stats-item {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 15rpx;
+  font-size: 26rpx;
+}
+
+.stats-item:last-child {
+  border-bottom: none;
+}
+
+.stats-field {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win-rate {
+  color: #07c160;
+  font-weight: bold;
+}
+
+.lose-rate {
+  color: #f53f3f;
+  font-weight: bold;
+}
+
+.empty-hint {
+  text-align: center;
+  padding: 50rpx;
+  color: #999;
+  font-size: 30rpx;
+}
+
+/* 对话框样式 */
+.dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-container {
+  background-color: white;
+  border-radius: 10rpx;
+  width: 80%;
+  max-width: 500rpx;
+}
+
+.dialog-title {
+  padding: 20rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-content {
+  padding: 30rpx;
+}
+
+.dialog-info {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.dialog-input input {
+  width: 100%;
+  padding: 20rpx;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.dialog-buttons {
+  display: flex;
+  border-top: 1px solid #eee;
+}
+
+.dialog-btn {
+  flex: 1;
+  padding: 20rpx;
+  font-size: 30rpx;
+}
+
+.cancel {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.confirm {
+  background-color: #1677ff;
+  color: white;
+}
+
+.edit-btn {
+  padding: 2rpx 2rpx;
+  font-size: 20rpx;
+  background-color: #e6f4ff;
+  color: #1677ff;
+  border: 1px solid #1677ff;
+  width: 60rpx !important;
+}
+
+.delete-btn {
+  padding: 2rpx 2rpx;
+  font-size: 20rpx;
+  background-color: #fff2f2;
+  color: #f53f3f;
+  border: 1px solid #f53f3f;
+  width: 60rpx !important;
+}
+
+/* 增加选择器特异性 */
+.record-field.action button.edit-btn,
+.record-field.action button.delete-btn {
+  width: 60rpx !important;
+}
+
+/* 按钮容器样式，使按钮并排显示 */
+.record-field.action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10rpx; /* 按钮之间的间距 */
+}
+
+/* 按钮样式调整 */
+.edit-btn, .delete-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 40rpx; /* 按钮高度 */
+  line-height: 40rpx; /* 文字垂直居中 */
+  border-radius: 4rpx; /* 圆角 */
+}

@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="season-bar" bindtap="goToSeasons">
+    <text>当前赛季: {{currentSeason ? currentSeason.name : '未选择赛季'}}</text>
+    <text class="arrow">→</text>
+  </view>
+
+  <view class="score-display">
+    <text class="title">当前分数</text>
+    <text class="score">{{currentScore}}</text>
+  </view>
+
+  <view class="score-input-section">
+    <text class="section-title">直接输入分数</text>
+    <view class="input-group">
+      <input 
+        type="number" 
+        placeholder="输入分数(0-10000)" 
+        value="{{inputScore}}"
+        bindinput="handleInputScore"
+        maxlength="5"
+      />
+      <button bindtap="confirmInputScore" class="confirm-btn">确认</button>
+    </view>
+  </view>
+
+  <view class="operation-section">
+    <text class="section-title">快捷操作</text>
+    <view class="operation-buttons">
+      <button 
+        wx:for="{{operationButtons}}" 
+        wx:key="index"
+        data-value="{{item.value}}"
+        bindtap="handleOperation"
+        class="op-btn {{item.value > 0 ? 'positive' : 'negative'}}"
+      >
+        {{item.label}}
+      </button>
+    </view>
+  </view>
+
+  <view class="time-section">
+    <text class="section-title">时间</text>
+    <!-- 简化版日期时间选择器 -->
+    <view class="time-picker" bindtap="showTimeSelector">
+      {{currentTime ? currentTime : '请选择时间'}}
+    </view>
+  </view>
+
+  <button class="save-btn" bindtap="saveRecord">保存记录</button>
+</view>

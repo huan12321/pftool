@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="title">数据管理</view>
+  
+  <view class="data-info">
+    <view class="info-item">
+      <text>当前赛季数量：</text>
+      <text>{{seasons.length}}</text>
+    </view>
+    
+    <view class="info-item">
+      <text>总记录数量：</text>
+      <text>{{totalRecords}}</text>
+    </view>
+  </view>
+  
+  <view class="operation-buttons">
+    <button bindtap="shareCurrentSeason" type="default" size="mini">分享当前赛季</button>
+    <button bindtap="importData" type="default" size="mini">导入数据</button>
+  </view>
+  
+  <view class="tips">
+    <view class="tip-item">• 导入时只会添加新数据，不会覆盖已有数据</view>
+    <view class="tip-item">• 请确保导入的CSV文件格式正确</view>
+  </view>
+</view>
