@@ -6,7 +6,7 @@
       </view>
     </picker>
   </view>
-
+  <button class="export-btn" bindtap="exportToCSV">导出数据</button>
   <!-- 模式切换 -->
   <view class="view-mode-switcher">
     <view class="mode-buttons">
@@ -24,8 +24,14 @@
       >
         分时段胜率
       </button>
+      <button 
+        class="mode-btn {{viewMode === 'chart' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="chart"
+      >
+        分数图表
+      </button>
     </view>
-    <button class="export-btn" bindtap="exportToCSV">导出数据</button>
   </view>
 
   <!-- 连胜连败列表 -->
@@ -57,29 +63,57 @@
   </view>
 
   <!-- 分时段胜率统计 -->
-<view wx:if="{{viewMode === 'hourly'}}" class="hourly-stats">
-  <view class="stats-header">
-    <view class="stats-column time-slot">时间段</view>
-    <view class="stats-column total">总场数</view>
-    <view class="stats-column win">胜率</view>
-    <view class="stats-column lose">败率</view>
-  </view>
-  
-  <view wx:for="{{hourlyStats}}" wx:key="{{item.dayType + item.hour}}" class="stats-item">
-    <view class="stats-field time-slot">{{item.timeDesc}}</view>
-    <view class="stats-field total">{{item.total}}</view>
-    <view class="stats-field win">
-      <text wx:if="{{item.total > 0}}" class="win-rate">{{item.winRate}}%</text>
-      <text wx:else>-</text>
+  <view wx:if="{{viewMode === 'hourly'}}" class="hourly-stats">
+    <view class="stats-header">
+      <view class="stats-column time-slot">时间段</view>
+      <view class="stats-column total">总场数</view>
+      <view class="stats-column win">胜率</view>
+      <view class="stats-column lose">败率</view>
     </view>
-    <view class="stats-field lose">
-      <text wx:if="{{item.total > 0}}" class="lose-rate">{{item.loseRate}}%</text>
-      <text wx:else>-</text>
+    
+    <view wx:for="{{hourlyStats}}" wx:key="{{item.dayType + item.hour}}" class="stats-item">
+      <view class="stats-field time-slot">{{item.timeDesc}}</view>
+      <view class="stats-field total">{{item.total}}</view>
+      <view class="stats-field win">
+        <text wx:if="{{item.total > 0}}" class="win-rate">{{item.winRate}}%</text>
+        <text wx:else>-</text>
+      </view>
+      <view class="stats-field lose">
+        <text wx:if="{{item.total > 0}}" class="lose-rate">{{item.loseRate}}%</text>
+        <text wx:else>-</text>
+      </view>
+    </view>
+    
+    <view wx:if="{{hourlyStats.length === 0}}" class="empty-hint">
+      暂无统计数据
     </view>
   </view>
-  
-  <view wx:if="{{hourlyStats.length === 0}}" class="empty-hint">
-    暂无统计数据
+
+<!-- 分数图表 -->
+<view wx:if="{{viewMode === 'chart'}}" class="chart-container">
+  <view wx:if="{{chartData.length > 0}}" class="chart-wrapper">
+    <view class="chart-title">分数变化趋势 ({{chartData.length}}条记录)</view>
+    <view 
+      class="canvas-container"
+      bindtouchstart="onChartTouchStart"
+      bindtouchmove="onChartTouchMove"
+      bindtouchend="onChartTouchEnd"
+      style="overflow: hidden;"
+    >
+      <canvas 
+        canvas-id="scoreChart" 
+        class="score-chart"
+        style="transform: translateX({{-scrollLeft}}px);"
+      ></canvas>
+    </view>
+    <view wx:if="{{chartData.length > 8}}" class="chart-tip">可左右滑动查看完整数据</view>
+    <view wx:if="{{chartData.length > 8}}" class="scroll-indicator">
+      <text>滑动查看完整图表</text>
+      <text class="scroll-arrow">→</text>
+    </view>
+  </view>
+  <view wx:else class="empty-hint">
+    暂无数据可显示图表
   </view>
 </view>
   
