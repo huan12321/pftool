@@ -89,33 +89,21 @@
     </view>
   </view>
 
-<!-- 分数图表 -->
-<view wx:if="{{viewMode === 'chart'}}" class="chart-container">
-  <view wx:if="{{chartData.length > 0}}" class="chart-wrapper">
-    <view class="chart-title">分数变化趋势 ({{chartData.length}}条记录)</view>
-    <view 
-      class="canvas-container"
-      bindtouchstart="onChartTouchStart"
-      bindtouchmove="onChartTouchMove"
-      bindtouchend="onChartTouchEnd"
-      style="overflow: hidden;"
-    >
-      <canvas 
-        canvas-id="scoreChart" 
-        class="score-chart"
-        style="transform: translateX({{-scrollLeft}}px);"
-      ></canvas>
+  <!-- 分数图表 -->
+  <view wx:if="{{viewMode === 'chart'}}" class="chart-container">
+    <view wx:if="{{chartData.length > 0}}" class="chart-wrapper">
+      <view class="chart-title">分数变化趋势 ({{chartData.length}}条记录)</view>
+      <view class="canvas-container">
+        <canvas 
+          canvas-id="scoreChart" 
+          class="score-chart"
+        ></canvas>
+      </view>
     </view>
-    <view wx:if="{{chartData.length > 8}}" class="chart-tip">可左右滑动查看完整数据</view>
-    <view wx:if="{{chartData.length > 8}}" class="scroll-indicator">
-      <text>滑动查看完整图表</text>
-      <text class="scroll-arrow">→</text>
+    <view wx:else class="empty-hint">
+      暂无数据可显示图表
     </view>
   </view>
-  <view wx:else class="empty-hint">
-    暂无数据可显示图表
-  </view>
-</view>
   
   <!-- 编辑对话框 -->
   <view wx:if="{{editDialogVisible}}" class="dialog-mask">

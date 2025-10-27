@@ -15,16 +15,10 @@ Page({
     hourlyStats: [], // 分时段统计数据
     chart: null, // 图表实例
     chartData: [], // 图表数据
-    scrollLeft: 0,
-    chartStartX: 0,
-    isChartScrolling: false,
-    lastMoveTime: 0,
-    moveThreshold: 5 // 移动阈值，减少不必要的更新
   },
 
-  
   onLoad() {
-      console.log('页面加载');
+    console.log('页面加载');
     this.loadSeasons();
     
     // 检查 wxCharts 是否加载成功
@@ -41,78 +35,6 @@ Page({
       this.data.chart = null;
     }
   },
-
-  onChartTouchStart(e) {
-    if (!this.data.chart || this.data.chartData.length <= 8) return;
-    
-    const touch = e.touches[0];
-    this.setData({
-      chartStartX: touch.x,
-      isChartScrolling: true,
-      lastMoveTime: Date.now()
-    });
-  },
-  
-  onChartTouchMove(e) {
-    if (!this.data.isChartScrolling || !this.data.chart) return;
-    
-    const now = Date.now();
-    // 限制更新频率，每16ms更新一次（约60fps）
-    if (now - this.data.lastMoveTime < 16) return;
-    
-    const touch = e.touches[0];
-    const deltaX = touch.x - this.data.chartStartX;
-    
-    // 应用移动阈值，减少微小移动的更新
-    if (Math.abs(deltaX) < this.data.moveThreshold) return;
-    
-    // 使用更平滑的滚动计算
-    const newScrollLeft = this.data.scrollLeft - deltaX * 0.8; // 降低灵敏度
-    
-    // 限制滚动范围
-    const maxScroll = this.calculateMaxScroll();
-    const constrainedScroll = Math.max(0, Math.min(newScrollLeft, maxScroll));
-    
-    this.setData({
-      scrollLeft: constrainedScroll,
-      chartStartX: touch.x,
-      lastMoveTime: now
-    });
-  },
-  
-  onChartTouchEnd(e) {
-    this.setData({
-      isChartScrolling: false
-    });
-    
-    // 添加惯性滚动
-    this.addMomentumScroll(e);
-  },
-// 计算最大滚动距离
-calculateMaxScroll() {
-  const systemInfo = wx.getSystemInfoSync();
-  const chartWidth = Math.max(systemInfo.windowWidth, this.data.chartData.length * 60);
-  const containerWidth = systemInfo.windowWidth - 40;
-  return Math.max(0, chartWidth - containerWidth);
-},
-
-// 惯性滚动效果
-addMomentumScroll(e) {
-  if (!e.changedTouches || e.changedTouches.length === 0) return;
-  
-  const touch = e.changedTouches[0];
-  const velocity = (touch.x - this.data.chartStartX) / (Date.now() - this.data.lastMoveTime);
-  
-  if (Math.abs(velocity) > 0.5) {
-    let momentumScroll = this.data.scrollLeft - velocity * 100;
-    const maxScroll = this.calculateMaxScroll();
-    momentumScroll = Math.max(0, Math.min(momentumScroll, maxScroll));
-    
-    this.setData({
-      scrollLeft: momentumScroll
-    });
-  }
-},  
 
   loadSeasons() {
     const seasons = wx.getStorageSync('seasons') || [];
@@ -174,113 +96,193 @@ addMomentumScroll(e) {
     });
   },
 
-  // 在 history.js 的 prepareChartData 方法中修改
-prepareChartData(records) {
-  if (records.length === 0) return [];
-  
-  // 按时间正序排列用于图表显示
-  const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
-  
-  // 确保数据都是数字类型
-  const chartData = sortedRecords.map(record => {
-    // 简化时间显示
-    const date = new Date(record.timestamp);
-    const timeLabel = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+  prepareChartData(records) {
+    if (records.length === 0) return [];
     
-    return {
-      time: timeLabel,
-      score: Number(record.score), // 确保是数字
-      timestamp: record.timestamp
-    };
-  });
+    // 按时间正序排列用于图表显示
+    const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // 确保数据都是数字类型
+    const chartData = sortedRecords.map(record => {
+      // 简化时间显示
+      const date = new Date(record.timestamp);
+      const timeLabel = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+      
+      return {
+        time: timeLabel,
+        score: Number(record.score), // 确保是数字
+        timestamp: record.timestamp
+      };
+    });
 
-  console.log('图表数据:', chartData); // 调试用
-  return chartData;
-},
+    console.log('图表数据:', chartData);
+    return chartData;
+  },
 
-// 修改 initChart 方法
-initChart() {
-  if (this.data.chartData.length === 0) {
-    console.log('没有图表数据');
-    return;
-  }
-  
-  console.log('开始初始化图表，数据量:', this.data.chartData.length);
-  console.log('seriesData:', this.data.chartData.map(item => item.score));
+  initChart() {
+    if (this.data.chartData.length === 0) {
+      console.log('没有图表数据');
+      return;
+    }
+    
+    console.log('开始初始化柱状图，数据量:', this.data.chartData.length);
+    console.log('seriesData:', this.data.chartData.map(item => item.score));
 
-  // 销毁之前的图表
-  if (this.data.chart) {
-    this.data.chart = null;
-  }
-  
-  // 使用延时确保 canvas 已经渲染
-  setTimeout(() => {
-    this.createChart();
-  }, 300);
-},
+    // 销毁之前的图表
+    if (this.data.chart) {
+      this.data.chart = null;
+    }
+    
+    // 使用延时确保 canvas 已经渲染
+    setTimeout(() => {
+      this.createColumnChart();
+    }, 300);
+  },
 
-// 分离创建图表的方法
-createChart() {
-  const systemInfo = wx.getSystemInfoSync();
-  const windowWidth = systemInfo.windowWidth;
-  
-  const categories = this.data.chartData.map(item => item.time);
-  const seriesData = this.data.chartData.map(item => item.score);
-  
-  // 计算数据范围
-  const minScore = Math.min(...seriesData);
-  const maxScore = Math.max(...seriesData);
-  const range = maxScore - minScore;
-  
-  console.log('数据范围:', { minScore, maxScore, range });
-  
-  try {
-    const chart = new wxCharts({
-      canvasId: 'scoreChart',
-      type: 'line',
-      categories: categories,
-      animation: true,
-      background: '#ffffff',
-      series: [{
-        name: '分数',
-        data: seriesData,
-        color: '#1677ff'
-      }],
-      xAxis: {
-        disableGrid: true,
-        fontColor: '#666666'
-      },
-      yAxis: {
-        title: '分数',
-        min: Math.floor(minScore - range * 0.1), // 留一些边距
-        max: Math.ceil(maxScore + range * 0.1),
-        format: function (val) {
-          return val % 1 === 0 ? val.toString() : val.toFixed(1);
+  createColumnChart() {
+    const systemInfo = wx.getSystemInfoSync();
+    const windowWidth = systemInfo.windowWidth;
+    
+    const categories = this.data.chartData.map(item => item.time);
+    const seriesData = this.data.chartData.map(item => item.score);
+    
+    // 计算数据范围
+    const minScore = Math.min(...seriesData);
+    const maxScore = Math.max(...seriesData);
+    const range = maxScore - minScore;
+    
+    console.log('数据范围:', { minScore, maxScore, range });
+    
+    try {
+      const chartWidth = windowWidth - 40;
+      const chartHeight = 250;
+      
+      // 创建柱状图
+      const chart = new wxCharts({
+        canvasId: 'scoreChart',
+        type: 'column', // 改为柱状图
+        categories: categories,
+        animation: false,
+        background: '#f8f9fa',
+        series: [{
+          name: '分数',
+          data: seriesData,
+          color: '#1677ff',
+          format: function (val) {
+            return val.toFixed(0);
+          }
+        }],
+        xAxis: {
+          disableGrid: false,
+          gridColor: '#e8e8e8',
+          fontColor: '#666666',
+          fontSize: 12,
+          // 根据数据量调整标签显示
+          labelCount: Math.min(8, categories.length),
+          // 标签旋转避免重叠
+          rotateLabel: categories.length > 6,
+          // 确保X轴显示
+          axisLine: true,
+          axisLineColor: '#666666',
+          title: '时间',
+          titleFontColor: '#666666',
+          titleFontSize: 14
+        },
+        yAxis: {
+          disableGrid: false,
+          gridColor: '#e8e8e8',
+          splitNumber: 5,
+          min: Math.max(0, Math.floor(minScore - range * 0.1)),
+          max: Math.ceil(maxScore + range * 0.1),
+          format: function (val) {
+            return val.toFixed(0);
+          },
+          axisLine: true,
+          axisLineColor: '#666666',
+          title: '分数',
+          titleFontColor: '#666666',
+          titleFontSize: 14,
+          titleLocation: 'middle'
+        },
+        width: chartWidth,
+        height: chartHeight,
+        dataLabel: false,
+        enableScroll: false,
+        legend: {
+          show: false
+        },
+        extra: {
+          column: {
+            // 柱状图宽度配置
+            width: Math.max(10, (chartWidth - 60) / Math.max(categories.length, 1) * 0.6)
+          }
+        },
+        padding: [15, 15, 15, 15]
+      });
+      
+      this.setData({
+        chart: chart
+      });
+      
+      console.log('柱状图创建成功');
+      
+    } catch (error) {
+      console.error('创建柱状图失败:', error);
+      // 尝试简化版柱状图
+      this.createSimpleColumnChart();
+    }
+  },
+
+  // 简化版柱状图
+  createSimpleColumnChart() {
+    const systemInfo = wx.getSystemInfoSync();
+    const windowWidth = systemInfo.windowWidth;
+    
+    const categories = this.data.chartData.map(item => item.time);
+    const seriesData = this.data.chartData.map(item => item.score);
+    
+    try {
+      const chart = new wxCharts({
+        canvasId: 'scoreChart',
+        type: 'column',
+        categories: categories,
+        series: [{
+          name: '分数',
+          data: seriesData,
+          color: '#1677ff'
+        }],
+        xAxis: {
+          gridColor: '#eeeeee',
+          fontColor: '#666666'
+        },
+        yAxis: {
+          gridColor: '#eeeeee',
+          fontColor: '#666666',
+          title: '分数',
+          format: function (val) {
+            return val.toFixed(0);
+          }
+        },
+        width: windowWidth - 40,
+        height: 400,
+        dataLabel: false,
+        enableScroll: false,
+        extra: {
+          column: {
+            width: 15
+          }
         }
-      },
-      width: windowWidth - 40, // 减去 padding
-      height: 300,
-      dataLabel: false,
-      dataPointShape: true,
-      enableScroll: seriesData.length > 6,
-      extra: {
-        lineStyle: 'curve'
-      }
-    });
-    
-    this.setData({
-      chart: chart
-    });
-    
-    console.log('图表创建成功');
-    
-  } catch (error) {
-    console.error('创建图表失败:', error);
-    // 尝试备选方案
-    this.createSimpleChart();
-  }
-},
-
+      });
+      
+      this.setData({
+        chart: chart
+      });
+      
+      console.log('简化柱状图创建成功');
+    } catch (error) {
+      console.error('简化柱状图也创建失败:', error);
+    }
+  },
 
   // 切换查看模式
   switchViewMode(e) {
