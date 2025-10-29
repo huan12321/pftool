@@ -7,6 +7,7 @@
     </picker>
   </view>
   <button class="export-btn" bindtap="exportToCSV">导出数据</button>
+  
   <!-- 模式切换 -->
   <view class="view-mode-switcher">
     <view class="mode-buttons">
@@ -31,6 +32,25 @@
       >
         分数图表
       </button>
+    </view>
+    
+    <!-- 时间范围选择器（只在图表模式显示） -->
+    <view wx:if="{{viewMode === 'chart'}}" class="time-range-selector">
+      <view class="time-range-label">时间范围:</view>
+      <view class="time-range-picker-container">
+        <picker 
+          value="{{selectedTimeRange}}" 
+          range="{{timeRangeOptions}}" 
+          range-key="label"
+          bindchange="onTimeRangeChange"
+        >
+          <view class="time-range-picker">
+            {{getCurrentTimeRangeText()}}
+            <text class="arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+      <view class="data-count">({{chartData.length}}条记录)</view>
     </view>
   </view>
 
@@ -92,7 +112,6 @@
   <!-- 分数图表 -->
   <view wx:if="{{viewMode === 'chart'}}" class="chart-container">
     <view wx:if="{{chartData.length > 0}}" class="chart-wrapper">
-      <view class="chart-title">分数变化趋势 ({{chartData.length}}条记录)</view>
       <view class="canvas-container">
         <canvas 
           canvas-id="scoreChart" 

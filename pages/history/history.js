@@ -15,6 +15,20 @@ Page({
     hourlyStats: [], // 分时段统计数据
     chart: null, // 图表实例
     chartData: [], // 图表数据
+    // 新增：时间范围选择相关数据
+    timeRangeOptions: [
+      { label: '最近1天', value: 1 },
+      { label: '最近3天', value: 3 },
+      { label: '最近7天', value: 7 },
+      { label: '最近15天', value: 15 },
+      { label: '最近30天', value: 30 },
+      { label: '最近60天', value: 60 },
+      { label: '最近100天', value: 100 },
+      { label: '全部数据', value: 0 }
+    ],
+    selectedTimeRange: 0, // 默认显示最近3天
+    filteredRecords: [], // 筛选后的记录
+    showTimeRangePicker: false // 控制时间范围选择器显示
   },
 
   onLoad() {
@@ -74,6 +88,9 @@ Page({
     // 按时间倒序排列
     seasonRecords.sort((a, b) => b.timestamp - a.timestamp);
     
+    // 根据选择的时间范围筛选记录
+    const filteredRecords = this.filterRecordsByTimeRange(seasonRecords);
+    
     // 分析连胜连败
     const analyzedRecords = this.analyzeStreaks(seasonRecords);
     
@@ -81,10 +98,11 @@ Page({
     const hourlyStats = this.calculateHourlyStats(seasonRecords);
     
     // 准备图表数据
-    const chartData = this.prepareChartData(seasonRecords);
+    const chartData = this.prepareChartData(filteredRecords);
     
     this.setData({
       records: seasonRecords,
+      filteredRecords: filteredRecords,
       analyzedRecords,
       hourlyStats,
       chartData
@@ -95,6 +113,25 @@ Page({
       }
     });
   },
+
+  // 根据时间范围筛选记录
+filterRecordsByTimeRange(records) {
+  const { selectedTimeRange, timeRangeOptions } = this.data;
+  
+  // 根据选中的索引获取对应的天数
+  const selectedOption = timeRangeOptions[selectedTimeRange];
+  if (!selectedOption) {
+    console.error('无效的时间范围选项:', selectedTimeRange);
+    return [];
+  }
+  
+  const days = selectedOption.value;
+  const now = new Date().getTime();
+  const timeRangeMs = days * 24 * 60 * 60 * 1000; // 转换为毫秒
+  const cutoffTime = now - timeRangeMs;
+  debugger;
+  return records.filter(record => record.timestamp >= cutoffTime);
+},
 
   prepareChartData(records) {
     if (records.length === 0) return [];
@@ -299,6 +336,32 @@ Page({
     });
   },
 
+// 切换时间范围
+onTimeRangeChange(e) {
+  const selectedIndex = parseInt(e.detail.value); // 这是选中的索引
+  this.setData({
+    selectedTimeRange: selectedIndex, // 存储索引值
+    showTimeRangePicker: false
+  }, () => {
+    // 重新加载记录（会自动筛选）
+    this.loadRecords();
+  });
+},
+
+  // 显示/隐藏时间范围选择器
+  toggleTimeRangePicker() {
+    this.setData({
+      showTimeRangePicker: !this.data.showTimeRangePicker
+    });
+  },
+
+// 获取当前时间范围的显示文本
+getCurrentTimeRangeText() {
+  const { selectedTimeRange, timeRangeOptions } = this.data;
+  const option = timeRangeOptions[selectedTimeRange]; // 通过索引获取选项
+  return option ? option.label : '选择时间范围';
+},
+
   // 计算分时段统计数据
   calculateHourlyStats(records) {
     const stats = {};
@@ -445,7 +508,7 @@ Page({
 
   // 导出CSV文件
   exportToCSV() {
-    if (this.data.records.length === 0) {
+    if (this.data.seasonRecords.length === 0) {
       wx.showToast({
         title: '没有数据可导出',
         icon: 'none'
@@ -483,7 +546,7 @@ Page({
 
   // 生成连胜连败CSV内容
   generateStreakCSV() {
-    const records = [...this.data.records].sort((a, b) => a.timestamp - b.timestamp);
+    const records = [...this.data.seasonRecords].sort((a, b) => a.timestamp - b.timestamp);
     
     let csv = '时间,分数,连胜连败状态\n';
     
@@ -536,7 +599,7 @@ Page({
   
   editRecord(e) {
     const recordId = e.currentTarget.dataset.id;
-    const record = this.data.records.find(r => r.id === recordId);
+    const record = this.data.seasonRecords.find(r => r.id === recordId);
     
     if (record) {
       this.setData({
@@ -583,18 +646,8 @@ Page({
         records[seasonId][recordIndex].score = score;
         wx.setStorageSync('records', records);
         
-        this.setData({
-          records: records[seasonId]
-        });
-        
-        const analyzedRecords = this.analyzeStreaks(records[seasonId]);
-        const hourlyStats = this.calculateHourlyStats(records[seasonId]);
-        const chartData = this.prepareChartData(records[seasonId]);
-        this.setData({
-          analyzedRecords,
-          hourlyStats,
-          chartData
-        });
+        // 重新加载记录
+        this.loadRecords();
         
         this.cancelEdit();
         
@@ -602,11 +655,6 @@ Page({
           title: '记录已更新',
           icon: 'success'
         });
-        
-        // 如果当前是图表模式，重新初始化图表
-        if (this.data.viewMode === 'chart') {
-          this.initChart();
-        }
       }
     }
   },
@@ -627,28 +675,13 @@ Page({
             records[seasonId] = records[seasonId].filter(r => r.id !== recordId);
             wx.setStorageSync('records', records);
             
-            that.setData({
-              records: records[seasonId]
-            });
-            
-            const analyzedRecords = that.analyzeStreaks(records[seasonId]);
-            const hourlyStats = that.calculateHourlyStats(records[seasonId]);
-            const chartData = that.prepareChartData(records[seasonId]);
-            that.setData({
-              analyzedRecords,
-              hourlyStats,
-              chartData
-            });
+            // 重新加载记录
+            that.loadRecords();
             
             wx.showToast({
               title: '记录已删除',
               icon: 'success'
             });
-            
-            // 如果当前是图表模式，重新初始化图表
-            if (that.data.viewMode === 'chart') {
-              that.initChart();
-            }
           }
         }
       }
