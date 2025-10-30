@@ -6,7 +6,6 @@
       </view>
     </picker>
   </view>
-  <button class="export-btn" bindtap="exportToCSV">导出数据</button>
   
   <!-- 模式切换 -->
   <view class="view-mode-switcher">
@@ -138,6 +137,7 @@
             bindinput="onEditScoreChange"
             min="0"
             max="10000"
+            style="padding: 0px;"
           />
         </view>
       </view>
