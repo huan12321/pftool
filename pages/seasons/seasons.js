@@ -165,13 +165,18 @@ Page({
     const seasonRecords = records[seasonId] || [];
     
     // 构建CSV内容
-    let csvContent = '赛季ID,赛季名称,初始分数,记录ID,分数,时间\n';
+    let csvContent = '分数,时间\n';
     
     seasonRecords.forEach(record => {
-      csvContent += `${season.id},${season.name},${season.initialScore},${record.id},${record.score},${record.time}\n`;
+      csvContent += `${record.score},${record.time}\n`;
     });
-    
-    // 复制到剪贴板
+    // 优先尝试生成文件
+  this.exportToFile(csvContent, `${season.name}_数据导出`).then(() => {
+    // 文件导出成功
+    console.log('文件导出成功');
+  }).catch((err) => {
+    console.error('文件导出失败，使用剪贴板:', err);
+    // 文件导出失败，使用剪贴板（简化版）
     wx.setClipboardData({
       data: csvContent,
       success: () => {
@@ -181,15 +186,65 @@ Page({
           duration: 2000
         });
       },
-      fail: (err) => {
-        console.error('复制失败', err);
+      fail: (clipboardErr) => {
+        console.error('剪贴板也失败:', clipboardErr);
         wx.showToast({
-          title: '复制失败',
+          title: '导出失败，请重试',
           icon: 'none'
         });
       }
     });
+  });
   },
+
+  // 导出到文件
+exportToFile(csvContent, fileName) {
+  return new Promise((resolve, reject) => {
+    // 方案1: 使用 FileSystemManager 写入文件
+    const fileSystemManager = wx.getFileSystemManager();
+    
+    // 生成临时文件路径
+    const tempFilePath = `${wx.env.USER_DATA_PATH}/${fileName}_${Date.now()}.csv`;
+    
+    try {
+      // 写入文件
+      fileSystemManager.writeFile({
+        filePath: tempFilePath,
+        data: csvContent,
+        encoding: 'utf8',
+        success: () => {
+          // 文件写入成功，尝试分享
+          wx.shareFileMessage({
+            filePath: tempFilePath,
+            success: () => {
+              console.log('文件分享成功');
+              resolve();
+            },
+            fail: (shareErr) => {
+              console.error('文件分享失败:', shareErr);
+              // 分享失败，但文件已创建，可以提示用户
+              wx.showModal({
+                title: '文件已保存',
+                content: `文件已保存到: ${tempFilePath}\n您可以在文件管理中查看`,
+                showCancel: false,
+                success: () => {
+                  resolve();
+                }
+              });
+            }
+          });
+        },
+        fail: (writeErr) => {
+          console.error('文件写入失败:', writeErr);
+          reject(writeErr);
+        }
+      });
+    } catch (error) {
+      console.error('文件操作异常:', error);
+      reject(error);
+    }
+  });
+},
 
   // 导入数据
   importData() {

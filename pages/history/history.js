@@ -508,6 +508,7 @@ getCurrentTimeRangeText() {
 
   // 导出CSV文件
   exportToCSV() {
+    debugger;
     if (this.data.records.length === 0) {
       wx.showToast({
         title: '没有数据可导出',
