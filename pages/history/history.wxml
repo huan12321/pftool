@@ -129,7 +129,7 @@
     <view class="dialog-container">
       <view class="dialog-title">编辑分数</view>
       <view class="dialog-content">
-        <view class="dialog-info">时间: {{currentEditRecord.time.replace('T', ' ')}}</view>
+        <view class="dialog-info">时间: {{currentEditRecord.time}}</view>
         <view class="dialog-input">
           <input 
             type="number" 
