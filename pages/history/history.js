@@ -129,7 +129,6 @@ filterRecordsByTimeRange(records) {
   const now = new Date().getTime();
   const timeRangeMs = days * 24 * 60 * 60 * 1000; // 转换为毫秒
   const cutoffTime = now - timeRangeMs;
-  debugger;
   return records.filter(record => record.timestamp >= cutoffTime);
 },
 
@@ -508,7 +507,6 @@ getCurrentTimeRangeText() {
 
   // 导出CSV文件
   exportToCSV() {
-    debugger;
     if (this.data.records.length === 0) {
       wx.showToast({
         title: '没有数据可导出',
@@ -599,7 +597,6 @@ getCurrentTimeRangeText() {
   },
   
   editRecord(e) {
-    debugger;
     const recordId = e.currentTarget.dataset.id;
     const record = this.data.records.find(r => r.id === recordId);
     

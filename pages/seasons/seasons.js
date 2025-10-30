@@ -154,7 +154,6 @@ Page({
     });
   },
 
-  // 导出单个赛季数据到剪贴板
   exportSeasonData(e) {
     const seasonId = e.currentTarget.dataset.id;
     const season = this.data.seasons.find(s => s.id === seasonId);
@@ -164,38 +163,268 @@ Page({
     const records = wx.getStorageSync('records') || {};
     const seasonRecords = records[seasonId] || [];
     
-    // 构建CSV内容
-    let csvContent = '分数,时间\n';
+    if (seasonRecords.length === 0) {
+      wx.showToast({
+        title: '该赛季没有数据',
+        icon: 'none'
+      });
+      return;
+    }
     
+    // 构建CSV内容
+    let csvContent = '时间,分数\n';
     seasonRecords.forEach(record => {
-      csvContent += `${record.score},${record.time}\n`;
+      csvContent += `${record.time},${record.score}\n`;
     });
-    // 优先尝试生成文件
-  this.exportToFile(csvContent, `${season.name}_数据导出`).then(() => {
-    // 文件导出成功
-    console.log('文件导出成功');
-  }).catch((err) => {
-    console.error('文件导出失败，使用剪贴板:', err);
-    // 文件导出失败，使用剪贴板（简化版）
-    wx.setClipboardData({
-      data: csvContent,
+    
+    const fileName = `${season.name}_数据.csv`;
+    const filePath = `${wx.env.USER_DATA_PATH}/${fileName}`;
+    const fs = wx.getFileSystemManager();
+    
+    try {
+      fs.writeFileSync(filePath, csvContent, 'utf8');
+      
+      // 显示转发选项 - 移除不存在的函数调用
+      wx.showActionSheet({
+        itemList: ['发送给朋友', '复制内容', '查看文件'],
+        success: (res) => {
+          switch (res.tapIndex) {
+            case 0:
+              // 发送给朋友
+              this.shareFileToFriend(filePath, fileName);
+              break;
+            case 1:
+              // 复制内容
+              wx.setClipboardData({
+                data: csvContent,
+                success: () => {
+                  wx.showToast({
+                    title: '已复制到剪贴板',
+                    icon: 'success'
+                  });
+                }
+              });
+              break;
+            case 2:
+              // 查看文件
+              this.previewFile(filePath);
+              break;
+          }
+        }
+      });
+      
+    } catch (error) {
+      console.error('文件保存失败:', error);
+      wx.setClipboardData({
+        data: csvContent,
+        success: () => {
+          wx.showToast({
+            title: '数据已复制到剪贴板',
+            icon: 'success'
+          });
+        }
+      });
+    }
+  },
+  
+  // 预览文件
+  previewFile(filePath) {
+    wx.openDocument({
+      filePath: filePath,
+      fileType: 'txt', // 使用txt格式更通用
       success: () => {
-        wx.showToast({
-          title: `${season.name}数据已复制到剪贴板`,
-          icon: 'success',
-          duration: 2000
-        });
+        console.log('文件预览成功');
       },
-      fail: (clipboardErr) => {
-        console.error('剪贴板也失败:', clipboardErr);
-        wx.showToast({
-          title: '导出失败，请重试',
-          icon: 'none'
+      fail: (err) => {
+        console.error('文件预览失败:', err);
+        wx.showModal({
+          title: '文件已保存',
+          content: '文件保存成功，但预览失败。您可以在文件管理中查看。',
+          showCancel: false
         });
       }
     });
-  });
   },
+  
+  // 分享文件给朋友
+  shareFileToFriend(filePath, fileName) {
+    // 先检查文件是否存在
+    const fs = wx.getFileSystemManager();
+    try {
+      fs.accessSync(filePath);
+      
+      // 文件存在，尝试分享
+      wx.shareFileMessage({
+        filePath: filePath,
+        success: () => {
+          wx.showToast({
+            title: '分享成功',
+            icon: 'success'
+          });
+        },
+        fail: (err) => {
+          console.error('分享失败:', err);
+          // 分享失败，提供其他选项
+          wx.showActionSheet({
+            itemList: ['复制内容', '查看文件'],
+            success: (res) => {
+              if (res.tapIndex === 0) {
+                // 重新读取文件内容进行复制
+                try {
+                  const content = fs.readFileSync(filePath, 'utf8');
+                  wx.setClipboardData({
+                    data: content,
+                    success: () => {
+                      wx.showToast({
+                        title: '已复制到剪贴板',
+                        icon: 'success'
+                      });
+                    }
+                  });
+                } catch (readErr) {
+                  wx.showToast({
+                    title: '读取文件失败',
+                    icon: 'none'
+                  });
+                }
+              } else if (res.tapIndex === 1) {
+                this.previewFile(filePath);
+              }
+            }
+          });
+        }
+      });
+      
+    } catch (accessErr) {
+      console.error('文件不存在:', accessErr);
+      wx.showToast({
+        title: '文件不存在',
+        icon: 'none'
+      });
+    }
+  },
+  
+  // 或者使用更可靠的图片分享方案
+  shareAsImage(season, records) {
+    wx.showLoading({ title: '生成图片中' });
+    
+    // 构建图片内容
+    let imageContent = `${season.name}数据统计\n`;
+    imageContent += `记录数: ${records.length}条\n`;
+    imageContent += `统计时间: ${new Date().toLocaleString()}\n\n`;
+    imageContent += '最近记录:\n';
+    
+    const recentRecords = records.slice(0, 10);
+    recentRecords.forEach((record, index) => {
+      imageContent += `${index + 1}. ${record.time} - ${record.score}分\n`;
+    });
+    
+    if (records.length > 10) {
+      imageContent += `...还有${records.length - 10}条记录`;
+    }
+    
+    // 使用canvas生成图片
+    this.generateImage(imageContent).then((imagePath) => {
+      wx.hideLoading();
+      
+      // 分享图片
+      wx.shareFileMessage({
+        filePath: imagePath,
+        success: () => {
+          wx.showToast({
+            title: '分享成功',
+            icon: 'success'
+          });
+        },
+        fail: (err) => {
+          console.error('图片分享失败:', err);
+          // 降级到预览图片
+          wx.previewImage({
+            urls: [imagePath],
+            success: () => {
+              wx.showToast({
+                title: '请手动保存或分享图片',
+                icon: 'none'
+              });
+            }
+          });
+        }
+      });
+      
+    }).catch((err) => {
+      wx.hideLoading();
+      console.error('图片生成失败:', err);
+      wx.showToast({
+        title: '生成失败，请使用其他方式',
+        icon: 'none'
+      });
+    });
+  },
+  
+  // 生成图片的辅助函数
+  generateImage(textContent) {
+    return new Promise((resolve, reject) => {
+      const query = wx.createSelectorQuery();
+      query.select('#shareCanvas').fields({ node: true, size: true }).exec((res) => {
+        if (!res[0] || !res[0].node) {
+          reject(new Error('Canvas未找到'));
+          return;
+        }
+        
+        const canvas = res[0].node;
+        const ctx = canvas.getContext('2d');
+        const width = 300;
+        const height = 400;
+        
+        // 设置canvas尺寸
+        canvas.width = width;
+        canvas.height = height;
+        
+        // 绘制背景
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // 绘制边框
+        ctx.strokeStyle = '#e8e8e8';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(5, 5, width - 10, height - 10);
+        
+        // 绘制文本
+        ctx.fillStyle = '#333333';
+        ctx.font = '14px sans-serif';
+        ctx.textBaseline = 'top';
+        
+        const lines = textContent.split('\n');
+        const lineHeight = 20;
+        const startY = 20;
+        
+        lines.forEach((line, index) => {
+          ctx.fillText(line, 20, startY + index * lineHeight);
+        });
+        
+        // 生成图片
+        wx.canvasToTempFilePath({
+          canvas: canvas,
+          fileType: 'png',
+          quality: 1,
+          success: (res) => {
+            resolve(res.tempFilePath);
+          },
+          fail: (err) => {
+            reject(err);
+          }
+        });
+      });
+    });
+  },
+// 页面分享配置
+onShareAppMessage() {
+  return {
+    title: '我的赛季数据统计',
+    desc: this.data.shareContent || '赛季数据分享',
+    path: '/pages/history/history'
+  };
+},
 
   // 导出到文件
 exportToFile(csvContent, fileName) {
