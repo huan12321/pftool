@@ -508,7 +508,7 @@ getCurrentTimeRangeText() {
 
   // 导出CSV文件
   exportToCSV() {
-    if (this.data.seasonRecords.length === 0) {
+    if (this.data.records.length === 0) {
       wx.showToast({
         title: '没有数据可导出',
         icon: 'none'
@@ -546,7 +546,7 @@ getCurrentTimeRangeText() {
 
   // 生成连胜连败CSV内容
   generateStreakCSV() {
-    const records = [...this.data.seasonRecords].sort((a, b) => a.timestamp - b.timestamp);
+    const records = [...this.data.records].sort((a, b) => a.timestamp - b.timestamp);
     
     let csv = '时间,分数,连胜连败状态\n';
     
@@ -598,8 +598,9 @@ getCurrentTimeRangeText() {
   },
   
   editRecord(e) {
+    debugger;
     const recordId = e.currentTarget.dataset.id;
-    const record = this.data.seasonRecords.find(r => r.id === recordId);
+    const record = this.data.records.find(r => r.id === recordId);
     
     if (record) {
       this.setData({
