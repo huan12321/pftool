@@ -1,20 +1,5 @@
-<wxs module="utils">
-function formatTime(timeStr) {
-  if (!timeStr) return '';
-  var date = getDate(timeStr);
-  var year = date.getFullYear();
-  var month = (date.getMonth() + 1).toString().padStart(2, '0');
-  var day = date.getDate().toString().padStart(2, '0');
-  var hours = date.getHours().toString().padStart(2, '0');
-  var minutes = date.getMinutes().toString().padStart(2, '0');
-  return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
-}
-module.exports = {
-  formatTime: formatTime
-}
-</wxs>
-
 <view class="container">
+  <!-- 原有的创建赛季部分保持不变 -->
   <view class="section-title">创建新赛季</view>
   
   <view class="input-group">
@@ -46,41 +31,64 @@ module.exports = {
     <button class="import-btn" bindtap="importData">导入数据</button>
     <text class="import-hint">支持从CSV文件导入赛季和记录数据</text>
   </view>
-  
+
+
   <view class="section-title">已创建赛季</view>
   
   <view class="seasons-list">
-    <view wx:for="{{seasons}}" wx:key="id" class="season-item">
+    <view wx:for="{{seasons}}" wx:key="id" class="season-item {{item.selected ? 'selected' : ''}}">
+      
       <view class="season-info">
-        <view class="season-name">{{item.name}}</view>
-        <view class="season-details">
-          <view class="season-id" bindtap="copySeasonId" data-id="{{item.id}}">
-            ID: {{item.id}}
-            <text class="copy-hint">点击复制</text>
+        <!-- 编辑模式 -->
+        <view wx:if="{{editingSeasonId === item.id}}" class="edit-mode">
+          <input 
+            class="edit-input"
+            value="{{editingSeasonName}}"
+            bindinput="handleEditInput"
+            placeholder="输入赛季名称"
+            focus
+          />
+          <view class="edit-actions">
+            <button class="edit-btn save" bindtap="saveEditSeason">保存</button>
+            <button class="edit-btn cancel" bindtap="cancelEditSeason">取消</button>
           </view>
-          <view class="season-detail">初始分数: {{item.initialScore}}</view>
-          <view class="season-detail">创建时间: {{utils.formatTime(item.createTime)}}</view>
-          <view class="season-stats">
-            <span class="stats-text">
-              记录数: {{item.recordCount}}
-            </span>
+        </view>
+        
+        <!-- 显示模式 -->
+        <view wx:else class="display-mode">
+          <view class="season-header">
+            <view class="season-name">
+              <view class="season-selector">
+            <checkbox checked="{{item.selected}}" 
+                      bindtap="toggleSeasonSelection" 
+                      data-id="{{item.id}}" />
+            {{item.name}}</view>
+          </view>
+          </view>
+          <view class="season-details">
+            <view class="season-id" bindtap="copySeasonId" data-id="{{item.id}}">
+              ID: {{item.id}}
+              <text class="copy-hint">点击复制</text>
+            </view>
+            <view class="season-detail">初始分数: {{item.initialScore}}</view>
+            <view class="season-stats">
+              <span class="stats-text">
+                记录数: {{item.recordCount}}
+              </span>
+            </view>
           </view>
         </view>
       </view>
-      <view class="season-actions">
+      
+          <!-- 操作按钮 -->
+      <view wx:if="{{editingSeasonId !== item.id}}" class="season-actions">
+      <view class="action-row">
         <button 
-          class="action-btn set-current {{wx.getStorageSync('currentSeasonId') === item.id ? 'active' : ''}}"
+          class="action-btn set-current {{currentSeasonId === item.id ? 'active' : ''}}"
           bindtap="setAsCurrent"
           data-id="{{item.id}}"
         >
-          {{wx.getStorageSync('currentSeasonId') === item.id ? '当前赛季' : '设为当前'}}
-        </button>
-        <button 
-          class="action-btn export"
-          bindtap="exportSeasonData"
-          data-id="{{item.id}}"
-        >
-          导出
+          {{currentSeasonId === item.id ? '当前赛季' : '设为当前'}}
         </button>
         <button 
           class="action-btn delete"
@@ -90,10 +98,56 @@ module.exports = {
           删除
         </button>
       </view>
+      <view class="action-row">
+        <button 
+          class="action-btn rename" 
+          bindtap="startEditSeason" 
+          data-id="{{item.id}}">
+          重命名
+        </button>
+        <button 
+          class="action-btn export"
+          bindtap="exportSeasonData"
+          data-id="{{item.id}}"
+        >
+          导出
+        </button>
+      
+      </view>
+    </view>
     </view>
     
     <view wx:if="{{seasons.length === 0}}" class="empty-hint">
       暂无赛季，请创建新赛季或导入数据
     </view>
   </view>
+
+    <!-- AI分析功能区域 -->
+    <view class="section-title">AI赛季分析</view>
+  
+  <view class="analysis-controls">
+    <view class="select-all">
+      <checkbox checked="{{allSelected}}" 
+                bindtap="toggleSelectAll" />
+      <text>全选</text>
+    </view>
+    
+    <button class="analyze-btn {{isAnalyzing ? 'disabled' : ''}}" 
+            bindtap="analyzeWithDeepSeek"
+            disabled="{{isAnalyzing}}">
+      {{isAnalyzing ? '分析中...' : 'AI分析选中赛季'}}
+    </button>
+  </view>
+
+  <!-- AI分析结果 -->
+  <view wx:if="{{aiAnalysisResult}}" id="ai-analysis-result" class="analysis-result">
+    <view class="result-header">
+      <text class="result-title">AI分析结果</text>
+      <button class="clear-btn" bindtap="clearAnalysisResult">清除</button>
+    </view>
+    <view class="result-content">
+      {{aiAnalysisResult}}
+    </view>
+  </view>
 </view>
+

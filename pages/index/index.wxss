@@ -240,3 +240,332 @@
   color: white !important;
   border-color: #1890ff !important;
 }
+
+.time-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.time-input {
+  flex: 1;
+}
+
+.time-format-hint {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 10rpx;
+  display: block;
+}
+
+.container {
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.season-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+}
+
+.arrow {
+  color: #666;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx;
+  background-color: #f0f7ff;
+  border-radius: 10rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx; /* 分数和变化量之间的间距 */
+  flex-wrap: wrap; /* 如果空间不够可以换行 */
+}
+
+
+.score {
+  font-size: 50rpx;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+.input-group {
+  display: flex;
+  gap: 15rpx;
+  align-items: center; /* 垂直居中 */
+}
+
+.input-group input {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+  min-width: 0; /* 防止输入框溢出 */
+}
+
+.confirm-btn {
+  width: 140rpx !important; /* 设置固定宽度 */
+  min-width: 120rpx !important; /* 最小宽度 */
+  background-color: #07c160;
+  color: white;
+  font-size: 24rpx;
+  margin: 0 !important; /* 清除默认外边距 */
+  line-height: 1.4 !important; /* 调整行高 */
+  white-space: nowrap; /* 防止文字换行 */
+  flex-shrink: 0; /* 防止按钮被压缩 */
+}
+
+.operation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  justify-content: space-between; /* 添加这行让按钮均匀分布 */
+}
+
+.op-btn {
+  width: calc((100% - 30rpx) / 3); /* 计算宽度：总宽度减去间隙后平分3份 */
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  box-sizing: border-box; /* 确保边框和内边距包含在宽度内 */
+    flex: 2;
+}
+
+.positive {
+  background-color: #eaffea;
+  color: #07c160;
+  border: 1px solid #07c160;
+}
+
+.negative {
+  background-color: #fff2f2;
+  color: #f53f3f;
+  border: 1px solid #f53f3f;
+}
+
+
+.time-input-group {
+  display: flex;
+  gap: 15rpx;
+  align-items: center;
+}
+
+.time-input {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+}
+
+.time-select-btn {
+  width: 120rpx;
+  background-color: #1677ff;
+  color: white;
+  font-size: 28rpx;
+}
+
+.time-format-hint {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #666;
+  text-align: right;
+}
+
+.save-btn {
+  background-color: #1677ff;
+  color: white;
+  padding: 20rpx;
+  font-size: 32rpx;
+  margin-top: 20rpx;
+}
+
+.picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.picker-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top-left-radius: 20rpx;
+  border-top-right-radius: 20rpx;
+  z-index: 101;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx;
+  border-bottom: 1px solid #eee;
+}
+
+.picker-cancel-btn, .picker-confirm-btn {
+  font-size: 32rpx;
+  padding: 0 20rpx;
+}
+
+.picker-cancel-btn {
+  color: #666;
+  background-color: transparent;
+}
+
+.picker-confirm-btn {
+  color: #1677ff;
+  background-color: transparent;
+}
+
+.picker-content {
+  height: 400rpx;
+  display: flex;
+  justify-content: space-around;
+}
+
+.picker-labels {
+  display: flex;
+  justify-content: space-around;
+  padding: 10rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+
+
+.change-display {
+  display: flex;
+  align-items: center;
+  font-size: 50rpx;
+}
+
+.change-text {
+  font-weight: bold;
+  padding: 8rpx 16rpx;
+}
+
+.change-text.positive {
+  color: #07c160;
+  border: none;
+  background-color: transparent;
+}
+
+.change-text.negative {
+  color: #fa5151;
+  border: none;
+  background-color: transparent;
+}
+
+
+.op-btn.active {
+  background-color: #1890ff !important;
+  color: white !important;
+  border-color: #1890ff !important;
+}
+
+.time-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.time-input {
+  flex: 1;
+}
+
+.time-format-hint {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 10rpx;
+  display: block;
+}
+
+.win-loss-buttons {
+  display: flex;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
+}
+
+.win-loss-buttons .op-btn {
+  flex: 1;
+  height: 80rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.win-btn {
+  background-color: #e6f7ff !important;
+  color: #1890ff !important;
+  border: 2rpx solid #1890ff !important;
+}
+
+.loss-btn {
+  background-color: #fff2f0 !important;
+  color: #ff4d4f !important;
+  border: 2rpx solid #ff4d4f !important;
+}
+
+.win-streak-info {
+  margin-top: 10rpx;
+}
+
+.win-streek-text {
+  font-size: 24rpx;
+  color: #52c41a;
+  background-color: #f6ffed;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid #b7eb8f;
+}
+
+.last-result-info {
+  margin-top: 5rpx;
+}
+
+.last-result-text {
+  font-size: 22rpx;
+  color: #666;
+  background-color: #f5f5f5;
+  padding: 6rpx 12rpx;
+  border-radius: 15rpx;
+}
+
+.season-selector {
+  margin-bottom: 20rpx;
+}

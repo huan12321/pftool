@@ -72,6 +72,13 @@
 .season-actions {
   display: flex;
   gap: 10rpx;
+  flex-direction: column;
+}
+
+.action-row {
+  display: flex;
+  gap: 10rpx;
+  justify-content: space-between;
 }
 
 .action-btn {
@@ -104,9 +111,19 @@
   color: #07c160;
   border: 1px solid #07c160;
 }
+.rename {
+  background-color: #fff2f2;
+  color: #52c41a;
+  border: 1px solid #52c41a;
+}
 
 /* 增加选择器特异性，确保样式生效 */
 .season-actions button.action-btn.set-current{
+  width: 120rpx !important;
+}
+
+/* 增加选择器特异性，确保样式生效 */
+.season-actions button.action-btn.rename{
   width: 120rpx !important;
 }
 
@@ -289,3 +306,221 @@
   color: #999;
   font-size: 28rpx;
 }
+
+/* 新增的CSS样式 */
+.edit-mode {
+  width: 100%;
+}
+
+.edit-input {
+  border: 1px solid #1677ff;
+  padding: 0rpx;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  margin-bottom: 0rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 15rpx;
+  margin-top: 5px;
+}
+
+.edit-btn {
+  flex: 1;
+  padding: 15rpx;
+  font-size: 26rpx;
+  border-radius: 6rpx;
+  border: none;
+}
+
+.edit-btn.save {
+  background-color: #1677ff;
+  color: white;
+}
+
+.edit-btn.cancel {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+
+}
+
+.season-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15rpx;
+}
+
+.rename-btn {
+  background-color: #f0f8ff;
+  color: #1677ff;
+  border: 1px solid #1677ff;
+  padding: 8rpx 16rpx;
+  font-size: 22rpx;
+  border-radius: 6rpx;
+  white-space: nowrap;
+  margin-left: 20rpx;
+  width: 120rpx !important;
+}
+
+/* 调整赛季名称的样式 */
+.season-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+/* 确保操作按钮在编辑模式下正确隐藏 */
+/* .season-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  min-width: 180rpx;
+} */
+
+/* 新增的AI分析相关样式 */
+.analysis-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.select-all text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.analyze-btn {
+  background-color: #1890ff;
+  color: white;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  border-radius: 8rpx;
+  border: none;
+}
+
+.analyze-btn.disabled {
+  background-color: #ccc;
+  color: #666;
+}
+
+/* 赛季项选中状态 */
+.season-item.selected {
+  background-color: #f0f8ff;
+  border: 2rpx solid #1890ff;
+}
+
+.season-selector {
+  margin-right: 20rpx;
+}
+
+/* 分析结果样式 */
+.analysis-result {
+  padding: 30rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  border-left: 6rpx solid #1890ff;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.clear-btn {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  border-radius: 6rpx;
+  border: none;
+}
+
+.result-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+/* 分析历史样式 */
+.analysis-history {
+  margin-top: 40rpx;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background-color: white;
+  border-radius: 8rpx;
+  border: 1rpx solid #e8e8e8;
+}
+
+.history-info {
+  flex: 1;
+}
+
+.history-time {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.history-seasons {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.history-actions {
+  display: flex;
+  gap: 15rpx;
+}
+
+.history-btn {
+  padding: 12rpx 20rpx;
+  font-size: 24rpx;
+  border-radius: 6rpx;
+  border: none;
+}
+
+.history-btn.view {
+  background-color: #1890ff;
+  color: white;
+}
+
+.history-btn.delete {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+/* 原有的其他样式保持不变 */

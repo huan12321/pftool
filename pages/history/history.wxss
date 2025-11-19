@@ -392,4 +392,155 @@
   border-radius: 4rpx; /* 圆角 */
 }
 
+/* 统计概览样式 - 透明底色 */
+.stats-overview {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+  padding: 30rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
 
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 0 15rpx;
+  position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  font-weight: 400;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.stat-periods {
+  font-size: 20rpx;
+  color: #999;
+  line-height: 1.3;
+}
+
+.stat-periods text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2rpx 0;
+}
+
+/* 为不同统计项添加特色颜色 */
+.stat-item:nth-child(1) .stat-value {
+  color: #1677ff; /* 蓝色表示平均 */
+}
+
+.stat-item:nth-child(2) .stat-value {
+  color: #52c41a; /* 绿色表示最高 */
+}
+
+.stat-item:nth-child(3) .stat-value {
+  color: #fa8c16; /* 橙色表示最低 */
+}
+
+/* 简约图标 */
+.stat-item:nth-child(1) .stat-label::before {
+  content: '● ';
+  color: #1677ff;
+  font-size: 20rpx;
+}
+
+.stat-item:nth-child(2) .stat-label::before {
+  content: '● ';
+  color: #52c41a;
+  font-size: 20rpx;
+}
+
+.stat-item:nth-child(3) .stat-label::before {
+  content: '● ';
+  color: #fa8c16;
+  font-size: 20rpx;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .stats-overview {
+    padding: 25rpx 20rpx;
+  }
+  
+  .stat-item {
+    padding: 0 10rpx;
+  }
+  
+  .stat-value {
+    font-size: 28rpx;
+  }
+  
+  .stat-periods {
+    font-size: 18rpx;
+  }
+}
+
+/* 调整表格列宽以适应移除败率列 */
+.stats-header {
+  display: flex;
+  background-color: rgba(245, 245, 245, 0.8);
+  border-bottom: 1rpx solid rgba(238, 238, 238, 0.8);
+  font-weight: bold;
+  font-size: 28rpx;
+}
+
+.stats-column.time-slot {
+  flex: 4;
+}
+
+.stats-column.total {
+  flex: 2;
+}
+
+.stats-column.win {
+  flex: 2;
+}
+
+.stats-field.time-slot {
+  flex: 4;
+}
+
+.stats-field.total {
+  flex: 2;
+}
+
+.stats-field.win {
+  flex: 2;
+}
+
+/* 微交互效果 */
+.stats-overview {
+  transition: all 0.3s ease;
+}
+
+.stats-overview:active {
+  transform: scale(0.995);
+  background: rgba(255, 255, 255, 0.95);
+}

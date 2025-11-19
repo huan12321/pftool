@@ -1,20 +1,30 @@
 <view class="container">
-  <view class="season-bar" bindtap="goToSeasons">
-    <text>当前赛季: {{currentSeason ? currentSeason.name : '未选择赛季'}}</text>
-    <text class="arrow">→</text>
+  <view class="season-selector">
+    <picker value="{{currentSeasonId}}" range="{{seasons}}" range-key="name" bindchange="onSeasonChange">
+      <view class="picker-view">
+        当前赛季: {{currentSeason.name || '请选择赛季'}}
+      </view>
+    </picker>
   </view>
 
   <view class="score-display">
-  <text class="title">当前分数</text>
-  <view class="score-row">
-    <text class="score">{{currentScore}}</text>
-    <view class="change-display" wx:if="{{changeValue !== 0}}">
-      <span class="change-text {{changeValue > 0 ? 'positive' : 'negative'}}">
-        {{changeValue > 0 ? '+' : ''}}{{changeValue}} = {{displayScore}}
-      </span>
+    <text class="title">当前分数</text>
+    <view class="score-row">
+      <text class="score">{{currentScore}}</text>
+      <view class="change-display" wx:if="{{changeValue !== 0}}">
+        <span class="change-text {{changeValue > 0 ? 'positive' : 'negative'}}">
+          {{changeValue > 0 ? '+' : ''}}{{changeValue}} = {{displayScore}}
+        </span>
+      </view>
+    </view>
+    <!-- 显示连胜信息 -->
+    <view class="win-streak-info" wx:if="{{winStreak > 0}}">
+      <text class="win-streak-text">当前连胜: {{winStreak}}场</text>
+    </view>
+    <view class="last-result-info" wx:if="{{lastResult !== null}}">
+      <text class="last-result-text">上一局: {{lastResult === 'win' ? '胜利' : '失败'}}</text>
     </view>
   </view>
-</view>
 
   <view class="score-input-section">
     <text class="section-title">直接输入分数</text>
@@ -32,6 +42,22 @@
 
   <view class="operation-section">
     <text class="section-title">快捷操作</text>
+    <!-- 胜利/失败按钮 -->
+    <view class="win-loss-buttons">
+      <button 
+        bindtap="handleWin"
+        class="op-btn win-btn"
+      >
+        胜利
+      </button>
+      <button 
+        bindtap="handleLoss"
+        class="op-btn loss-btn"
+      >
+        失败
+      </button>
+    </view>
+    <!-- 分数按钮 -->
     <view class="operation-buttons">
       <button 
         wx:for="{{operationButtons}}" 
@@ -50,7 +76,7 @@
     <view class="time-input-group">
       <input 
         type="text" 
-        placeholder="YYYY-MM-DD HH:MM" 
+        placeholder="默认当前时间" 
         value="{{currentTime}}"
         bindinput="handleTimeInput"
         maxlength="16"

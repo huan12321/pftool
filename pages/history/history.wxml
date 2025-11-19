@@ -83,11 +83,34 @@
 
   <!-- 分时段胜率统计 -->
   <view wx:if="{{viewMode === 'hourly'}}" class="hourly-stats">
+<!-- 新增：统计概览 -->
+<view class="stats-overview">
+    <view class="stat-item">
+      <view class="stat-label">平均胜率</view>
+      <view class="stat-value">{{averageWinRate}}%</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-label">最高胜率</view>
+      <view class="stat-value">{{maxWinRate}}%</view>
+      <view class="stat-periods">
+        <text wx:for="{{maxWinRatePeriods}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-label">最低胜率</view>
+      <view class="stat-value">{{minWinRate}}%</view>
+      <view class="stat-periods">
+        <text wx:for="{{minWinRatePeriods}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+
     <view class="stats-header">
       <view class="stats-column time-slot">时间段</view>
       <view class="stats-column total">总场数</view>
       <view class="stats-column win">胜率</view>
-      <view class="stats-column lose">败率</view>
+      <!-- <view class="stats-column lose">败率</view> -->
     </view>
     
     <view wx:for="{{hourlyStats}}" wx:key="{{item.dayType + item.hour}}" class="stats-item">
@@ -97,10 +120,10 @@
         <text wx:if="{{item.total > 0}}" class="win-rate">{{item.winRate}}%</text>
         <text wx:else>-</text>
       </view>
-      <view class="stats-field lose">
+      <!-- <view class="stats-field lose">
         <text wx:if="{{item.total > 0}}" class="lose-rate">{{item.loseRate}}%</text>
         <text wx:else>-</text>
-      </view>
+      </view> -->
     </view>
     
     <view wx:if="{{hourlyStats.length === 0}}" class="empty-hint">

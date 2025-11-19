@@ -362,85 +362,146 @@ getCurrentTimeRangeText() {
 },
 
   // 计算分时段统计数据
-  calculateHourlyStats(records) {
-    const stats = {};
+calculateHourlyStats(records) {
+  const stats = {};
+  
+  records.forEach(record => {
+    if (!record.time) return;
     
-    records.forEach(record => {
-      if (!record.time) return;
+    // 解析时间字符串
+    const dateTime = record.time.replace('T', ' ');
+    const date = new Date(dateTime);
+    
+    // 获取星期几 (0-6, 0是周日)
+    const dayOfWeek = date.getDay();
+    // 获取小时 (0-23)
+    const hour = date.getHours();
+    
+    // 判断是工作日还是周末
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0:周日, 6:周六
+    const dayType = isWeekend ? 'weekend' : 'weekday';
+    
+    // 生成唯一键
+    const key = `${dayType}_${hour}`;
+    
+    if (!stats[key]) {
+      // 直接在这里生成显示文本
+      const timeDesc = isWeekend 
+        ? `周末 ${hour}:00-${hour + 1}:00`
+        : `工作日 ${hour}:00-${hour + 1}:00`;
       
-      // 解析时间字符串
-      const dateTime = record.time.replace('T', ' ');
-      const date = new Date(dateTime);
-      
-      // 获取星期几 (0-6, 0是周日)
-      const dayOfWeek = date.getDay();
-      // 获取小时 (0-23)
-      const hour = date.getHours();
-      
-      // 判断是工作日还是周末
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0:周日, 6:周六
-      const dayType = isWeekend ? 'weekend' : 'weekday';
-      
-      // 生成唯一键
-      const key = `${dayType}_${hour}`;
-      
-      if (!stats[key]) {
-        // 直接在这里生成显示文本
-        const timeDesc = isWeekend 
-          ? `周末 ${hour}:00-${hour + 1}:00`
-          : `工作日 ${hour}:00-${hour + 1}:00`;
+      stats[key] = {
+        dayType: dayType,
+        hour: hour,
+        timeDesc: timeDesc, // 直接存储显示文本
+        total: 0,
+        win: 0,
+        lose: 0,
+        winRate: 0,
+        loseRate: 0
+      };
+    }
+    
+    // 判断胜负（分数增加为胜，减少为败）
+    const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
+    const currentIndex = sortedRecords.findIndex(r => r.id === record.id);
+    
+    if (currentIndex > 0) {
+      const prevRecord = sortedRecords[currentIndex - 1]; // 前一条记录
+      if (prevRecord) {
+        const isWin = record.score > prevRecord.score;
+        const isLose = record.score < prevRecord.score;
         
-        stats[key] = {
-          dayType: dayType,
-          hour: hour,
-          timeDesc: timeDesc, // 直接存储显示文本
-          total: 0,
-          win: 0,
-          lose: 0,
-          winRate: 0,
-          loseRate: 0
-        };
-      }
-      
-      // 判断胜负（分数增加为胜，减少为败）
-      const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
-      const currentIndex = sortedRecords.findIndex(r => r.id === record.id);
-      
-      if (currentIndex > 0) {
-        const prevRecord = sortedRecords[currentIndex - 1]; // 前一条记录
-        if (prevRecord) {
-          const isWin = record.score > prevRecord.score;
-          const isLose = record.score < prevRecord.score;
-          
-          stats[key].total++;
-          if (isWin) stats[key].win++;
-          if (isLose) stats[key].lose++;
-        }
-      } else {
-        // 第一条记录，无法判断胜负，只计数
         stats[key].total++;
+        if (isWin) stats[key].win++;
+        if (isLose) stats[key].lose++;
       }
-    });
-    
-    // 计算胜率败率并转换为数组
-    const result = Object.values(stats).map(stat => {
-      if (stat.total > 0) {
-        stat.winRate = Math.round((stat.win / stat.total) * 100);
-        stat.loseRate = Math.round((stat.lose / stat.total) * 100);
-      }
-      return stat;
-    });
-    
-    // 按时间段排序：先工作日后周末，再按小时排序
-    result.sort((a, b) => {
-      if (a.dayType !== b.dayType) {
-        return a.dayType === 'weekday' ? -1 : 1;
-      }
-      return a.hour - b.hour;
-    });
-    
-    return result;
-  },
+    } else {
+      // 第一条记录，无法判断胜负，只计数
+      stats[key].total++;
+    }
+  });
+  
+  // 计算胜率败率并转换为数组
+  const result = Object.values(stats).map(stat => {
+    if (stat.total > 0) {
+      stat.winRate = Math.round((stat.win / stat.total) * 100);
+      stat.loseRate = Math.round((stat.lose / stat.total) * 100);
+    }
+    return stat;
+  });
+  
+  // 按时间段排序：先工作日后周末，再按小时排序
+  result.sort((a, b) => {
+    if (a.dayType !== b.dayType) {
+      return a.dayType === 'weekday' ? -1 : 1;
+    }
+    return a.hour - b.hour;
+  });
+  
+  // 计算概览数据
+  const overview = this.calculateStatsOverview(result);
+  
+  // 设置数据
+  this.setData({
+    hourlyStats: result,
+    ...overview
+  });
+  
+  return result;
+},
+
+// 计算统计概览数据
+calculateStatsOverview(stats) {
+  if (stats.length === 0) {
+    return {
+      averageWinRate: 0,
+      maxWinRate: 0,
+      minWinRate: 0,
+      maxWinRatePeriods: [],
+      minWinRatePeriods: []
+    };
+  }
+  
+  // 过滤出有数据的时段
+  const validStats = stats.filter(stat => stat.total > 0);
+  
+  if (validStats.length === 0) {
+    return {
+      averageWinRate: 0,
+      maxWinRate: 0,
+      minWinRate: 0,
+      maxWinRatePeriods: [],
+      minWinRatePeriods: []
+    };
+  }
+  
+  // 计算平均胜率
+  const totalWin = validStats.reduce((sum, stat) => sum + stat.win, 0);
+  const totalRecord = validStats.reduce((sum, stat) => sum + stat.total, 0);
+  const averageWinRate = Math.round(totalWin / totalRecord * 100);
+  
+  // 找到最高胜率和最低胜率
+  const maxWinRate = Math.max(...validStats.map(stat => stat.winRate));
+  const minWinRate = Math.min(...validStats.map(stat => stat.winRate));
+  
+  // 找到对应的时段（可能有多个）
+  const maxWinRatePeriods = validStats
+    .filter(stat => stat.winRate === maxWinRate)
+    .map(stat => stat.timeDesc);
+  
+  const minWinRatePeriods = validStats
+    .filter(stat => stat.winRate === minWinRate)
+    .map(stat => stat.timeDesc);
+  
+  return {
+    averageWinRate,
+    maxWinRate,
+    minWinRate,
+    maxWinRatePeriods,
+    minWinRatePeriods
+  };
+},
 
   analyzeStreaks(records) {
     if (records.length <= 1) return records.map(r => ({...r, streak: ''}));
@@ -587,10 +648,14 @@ getCurrentTimeRangeText() {
   },
 
   onSeasonChange(e) {
-    const seasonId = e.detail.value;
+    const seasonIndex = e.detail.value;
+    const seasons = wx.getStorageSync('seasons') || [];
+    const seasonId = seasons[seasonIndex].id;
+    const seasonName = seasons[seasonIndex].name;
     wx.setStorageSync('currentSeasonId', seasonId);
     this.setData({
-      currentSeasonId: seasonId
+      currentSeasonId: seasonId,
+      currentSeasonName: seasonName
     }, () => {
       this.loadRecords();
     });
