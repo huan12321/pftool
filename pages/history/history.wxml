@@ -22,7 +22,7 @@
         bindtap="switchViewMode"
         data-mode="hourly"
       >
-        分时段胜率
+        分时段胜率/省
       </button>
       <button 
         class="mode-btn {{viewMode === 'chart' ? 'active' : ''}}"
