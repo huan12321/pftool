@@ -164,15 +164,22 @@ Page({
 
   generateRandomPegs: function() {
     var SAFE_DIST = 2 * PEG_RADIUS + 2.5 * BALL_RADIUS
-    var PAIR_DIST = 2 * PEG_RADIUS + 0.3 * BALL_RADIUS
+    var PAIR_DISTS = [
+      2 * PEG_RADIUS + 0.3 * BALL_RADIUS,
+      2 * PEG_RADIUS + 0.5 * BALL_RADIUS,
+      2 * PEG_RADIUS + 0.8 * BALL_RADIUS,
+      2 * PEG_RADIUS + 1.0 * BALL_RADIUS
+    ]
     var PAIR_PROB = 0.2
     var PAIR_OFFSETS = [
-      { dx: 0, dy: PAIR_DIST },
-      { dx: 0, dy: -PAIR_DIST },
-      { dx: PAIR_DIST * 0.7, dy: PAIR_DIST * 0.7 },
-      { dx: -PAIR_DIST * 0.7, dy: PAIR_DIST * 0.7 },
-      { dx: PAIR_DIST * 0.7, dy: -PAIR_DIST * 0.7 },
-      { dx: -PAIR_DIST * 0.7, dy: -PAIR_DIST * 0.7 }
+      { dx: 0, dy: 1 },
+      { dx: 0, dy: -1 },
+      { dx: 0.7, dy: 0.7 },
+      { dx: -0.7, dy: 0.7 },
+      { dx: 0.7, dy: -0.7 },
+      { dx: -0.7, dy: -0.7 },
+      { dx: 1, dy: 0.3 },
+      { dx: -1, dy: 0.3 }
     ]
     var wallUnsafeNear = PEG_RADIUS + BALL_RADIUS
     var wallUnsafeFar = PEG_RADIUS + 2 * BALL_RADIUS
@@ -200,14 +207,20 @@ Page({
       pegs.push({ x: x, y: y, row: 0, col: pegs.length })
       if (Math.random() < PAIR_PROB) {
         var off = PAIR_OFFSETS[Math.floor(Math.random() * PAIR_OFFSETS.length)]
-        var px = x + off.dx
-        var py = y + off.dy
+        var pd = PAIR_DISTS[Math.floor(Math.random() * PAIR_DISTS.length)]
+        var px = x + off.dx * pd
+        var py = y + off.dy * pd
         if (px >= 0 && px <= BOARD_WIDTH && py >= LAUNCH_HEIGHT && py <= LAUNCH_HEIGHT + BOARD_HEIGHT) {
           if (isWallSafe(px) && checkDist(px, py)) {
             pegs.push({ x: px, y: py, row: 0, col: pegs.length })
           }
         }
       }
+    }
+    var removeCount = Math.floor(pegs.length / 10)
+    for (var r = 0; r < removeCount; r++) {
+      var idx = Math.floor(Math.random() * pegs.length)
+      pegs.splice(idx, 1)
     }
     this.pegs = pegs
     wx.setStorageSync('plinko_peg_random', pegs)
@@ -216,20 +229,57 @@ Page({
   resetPegs: function() {
     if (this.isRunning) return
     wx.removeStorageSync('plinko_peg_random')
+    wx.removeStorageSync('plinko_slot_dist')
     this.generateRandomPegs()
+    this.generateSlotDistribution()
+    this.buildSlots()
     wx.showToast({ title: '已重置钉子', icon: 'success' })
+  },
+
+  getSlotCount: function(n) {
+    var map = { 2: 10, 3: 12, 4: 12, 5: 10, 6: 12 }
+    return map[n] || n
+  },
+
+  generateSlotDistribution: function() {
+    var slots = this.data.slots
+    var n = slots.length
+    var total = this.getSlotCount(n)
+    var repeats = Math.floor(total / n)
+    var extra = total - repeats * n
+    var arr = []
+    for (var i = 0; i < n; i++) {
+      var count = repeats + (i < extra ? 1 : 0)
+      for (var j = 0; j < count; j++) {
+        arr.push(i)
+      }
+    }
+    for (var k = arr.length - 1; k > 0; k--) {
+      var r = Math.floor(Math.random() * (k + 1))
+      var tmp = arr[k]
+      arr[k] = arr[r]
+      arr[r] = tmp
+    }
+    wx.setStorageSync('plinko_slot_dist', arr)
+    return arr
   },
 
   buildSlots: function() {
     var slots = this.data.slots
-    var slotCount = slots.length
+    var n = slots.length
+    var total = this.getSlotCount(n)
+    var saved = wx.getStorageSync('plinko_slot_dist')
+    if (!saved || saved.length !== total) {
+      saved = this.generateSlotDistribution()
+    }
     var rects = []
-    for (var i = 0; i < slotCount; i++) {
+    for (var i = 0; i < total; i++) {
+      var labelIdx = saved[i]
       rects.push({
-        xStart: i * BOARD_WIDTH / slotCount,
-        xEnd: (i + 1) * BOARD_WIDTH / slotCount,
-        label: slots[i],
-        color: SLOT_COLORS[i % SLOT_COLORS.length]
+        xStart: i * BOARD_WIDTH / total,
+        xEnd: (i + 1) * BOARD_WIDTH / total,
+        label: slots[labelIdx],
+        color: SLOT_COLORS[labelIdx % SLOT_COLORS.length]
       })
     }
     this.slotRects = rects
