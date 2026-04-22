@@ -1,1 +1,5 @@
-{`r`n  "usingComponents": {},`r`n  "navigationBarTitleText": "记录中心",`r`n  "enablePullDownRefresh": false`r`n}
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "记录中心",
+  "enablePullDownRefresh": false
+}

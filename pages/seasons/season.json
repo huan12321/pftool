@@ -1,1 +1,6 @@
-{`r`n  "usingComponents": {},`r`n  "navigationBarTitleText": "赛季管理",`r`n  "enablePullDownRefresh": false,`r`n  "disableScroll": false`r`n}
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "赛季管理",
+  "enablePullDownRefresh": false,
+  "disableScroll": false
+}

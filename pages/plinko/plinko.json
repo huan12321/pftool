@@ -1,1 +1,5 @@
-{`r`n  "usingComponents": {},`r`n  "navigationBarTitleText": "弹珠抽奖",`r`n  "disableScroll": true`r`n}
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "弹珠抽奖",
+  "disableScroll": true
+}
