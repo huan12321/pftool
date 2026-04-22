@@ -23,7 +23,7 @@ Page({
     isCharging: false,
     powerPercent: 0,
     showConfigModal: false,
-    slots: ['A', 'B', 'C', 'D', 'E'],
+    slots: ['选项A', '选项B', '选项C', '选项D', '选项E'],
     lastResult: ''
   },
 
@@ -277,7 +277,7 @@ Page({
       ctx.fillStyle = 'rgba(255,255,255,0.4)'
       ctx.font = '12px sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText('Pull back & release', ax, ay + 42)
+      ctx.fillText('往后拉动弹珠，松手发射', ax, ay + 42)
     }
   },
 
@@ -662,17 +662,17 @@ Page({
 
   addSlot: function() {
     if (this.data.slots.length >= 10) {
-      wx.showToast({ title: 'Max 10', icon: 'none' })
+      wx.showToast({ title: '最多10个槽位', icon: 'none' })
       return
     }
-    var slots = this.data.slots.concat(['New'])
+    var slots = this.data.slots.concat(['新选项'])
     this.setData({ slots: slots })
   },
 
   deleteSlot: function(e) {
     var index = e.currentTarget.dataset.index
     if (this.data.slots.length <= 2) {
-      wx.showToast({ title: 'Min 2', icon: 'none' })
+      wx.showToast({ title: '至少需要2个槽位', icon: 'none' })
       return
     }
     var slots = this.data.slots.slice()
@@ -683,12 +683,12 @@ Page({
   saveSlots: function() {
     var slots = this.data.slots.filter(function(s) { return s.trim() !== '' })
     if (slots.length < 2) {
-      wx.showToast({ title: 'Min 2', icon: 'none' })
+      wx.showToast({ title: '至少需要2个槽位', icon: 'none' })
       return
     }
     this.setData({ slots: slots, showConfigModal: false })
     wx.setStorageSync('plinko_slots', slots)
     this.buildSlots()
-    wx.showToast({ title: 'Saved', icon: 'success' })
+    wx.showToast({ title: '已保存', icon: 'success' })
   }
 })

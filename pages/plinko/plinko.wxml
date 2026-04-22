@@ -1,12 +1,11 @@
 <view class="plinko-container">
-  <!-- Canvas 游戏区域 -->
   <canvas type="2d" id="plinkoCanvas" class="plinko-canvas" 
     bindtouchstart="onTouchStart" 
     bindtouchmove="onTouchMove" 
     bindtouchend="onTouchEnd">
   </canvas>
 
-  <!-- 力度指示器 -->
+  <!-- power indicator -->
   <view class="power-indicator" wx:if="{{isCharging}}">
     <view class="power-bar">
       <view class="power-fill" style="height: {{powerPercent}}%"></view>
@@ -14,7 +13,7 @@
     <text class="power-text">{{powerPercent}}%</text>
   </view>
 
-  <!-- 底部操作区 -->
+  <!-- bottom bar -->
   <view class="bottom-bar">
     <view class="slot-config" bindtap="showSlotConfig">
       <text class="config-btn">配置槽位</text>
@@ -25,7 +24,7 @@
     </view>
   </view>
 
-  <!-- 槽位配置弹窗 -->
+  <!-- slot config modal -->
   <view class="modal-mask" wx:if="{{showConfigModal}}" bindtap="hideSlotConfig">
     <view class="modal-content" catchtap="">
       <view class="modal-header">

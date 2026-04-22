@@ -4,21 +4,18 @@
   </view>
   
   <view class="function-grid">
-    <!-- Pokémon 分数记录模块 -->
     <view class="function-card" bindtap="goToPokemon">
       <image class="card-icon" src="/images/pokemon-icon.png" mode="aspectFit"></image>
       <text class="card-title">Pokémon</text>
       <text class="card-desc">对战分数记录</text>
     </view>
     
-    <!-- 通用记录模块 -->
     <view class="function-card" bindtap="goToRecord">
       <image class="card-icon" src="/images/record-icon.png" mode="aspectFit"></image>
       <text class="card-title">日常记录</text>
       <text class="card-desc">日常技能记录</text>
     </view>
     
-    <!-- 弹珠抽奖 -->
     <view class="function-card plinko-card" bindtap="goToPlinko">
       <text class="card-icon-text">🎱</text>
       <text class="card-title">弹珠抽奖</text>

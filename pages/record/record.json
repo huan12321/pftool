@@ -1,6 +1,1 @@
-{
-  "usingComponents": {},
-  "navigationBarTitleText": "通用记录",
-  "enablePullDownRefresh": false,
-  "backgroundColor": "#f5f7fa"
-}
+{`r`n  "usingComponents": {},`r`n  "navigationBarTitleText": "通用记录",`r`n  "enablePullDownRefresh": false,`r`n  "backgroundColor": "#f5f7fa"`r`n}

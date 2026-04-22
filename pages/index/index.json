@@ -1,6 +1,1 @@
-{
-  "usingComponents": {},
-  "navigationBarTitleText": "Pokémon 分数记录",
-  "enablePullDownRefresh": false,
-  "disableScroll": false
-}
+{`r`n  "usingComponents": {},`r`n  "navigationBarTitleText": "Pokémon 分数记录",`r`n  "enablePullDownRefresh": false,`r`n  "disableScroll": false`r`n}
