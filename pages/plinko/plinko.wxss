@@ -67,6 +67,19 @@
   border-radius: 12rpx;
 }
 
+.bottom-btns {
+  display: flex;
+  gap: 16rpx;
+}
+
+.reset-btn {
+  color: #ffaa00;
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+  border: 2rpx solid #ffaa00;
+  border-radius: 12rpx;
+}
+
 .result-display {
   display: flex;
   align-items: center;

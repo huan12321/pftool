@@ -154,21 +154,44 @@ Page({
   },
 
   buildPegs: function() {
+    var saved = wx.getStorageSync('plinko_peg_random')
+    if (saved && saved.length > 0) {
+      this.pegs = saved
+      return
+    }
+    this.generateRandomPegs()
+  },
+
+  generateRandomPegs: function() {
+    var minDist = (BALL_RADIUS + PEG_RADIUS) * 3.5
     var pegs = []
-    var rows = 16
-    var pegAreaTop = LAUNCH_HEIGHT
-    for (var row = 0; row < rows; row++) {
-      var y = pegAreaTop + (row + 0.8) * (BOARD_HEIGHT / (rows + 0.5))
-      var isOddRow = row % 2 === 1
-      var cols = isOddRow ? 8 : 7
-      for (var col = 0; col < cols; col++) {
-        var x = isOddRow
-          ? (col + 1) * BOARD_WIDTH / (cols + 1)
-          : (col + 0.5) * BOARD_WIDTH / cols
-        pegs.push({ x: x, y: y, row: row, col: col })
+    var maxAttempts = 3000
+    var target = 90 + Math.floor(Math.random() * 30)
+    for (var i = 0; i < maxAttempts && pegs.length < target; i++) {
+      var x = Math.random() * BOARD_WIDTH
+      var y = LAUNCH_HEIGHT + Math.random() * BOARD_HEIGHT
+      var ok = true
+      for (var j = 0; j < pegs.length; j++) {
+        var dx = x - pegs[j].x
+        var dy = y - pegs[j].y
+        if (dx * dx + dy * dy < minDist * minDist) {
+          ok = false
+          break
+        }
+      }
+      if (ok) {
+        pegs.push({ x: x, y: y, row: 0, col: pegs.length })
       }
     }
     this.pegs = pegs
+    wx.setStorageSync('plinko_peg_random', pegs)
+  },
+
+  resetPegs: function() {
+    if (this.isRunning) return
+    wx.removeStorageSync('plinko_peg_random')
+    this.generateRandomPegs()
+    wx.showToast({ title: '已重置钉子', icon: 'success' })
   },
 
   buildSlots: function() {
@@ -479,6 +502,7 @@ Page({
   launchBall: function(power, pullDx, pullDy) {
     if (this.isRunning) return
     this.isRunning = true
+    this.setData({ hitCount: 0 })
 
     // slingshot: launch direction is OPPOSITE to pull direction
     // pullDx/pullDy are screen pixels, convert to world velocity

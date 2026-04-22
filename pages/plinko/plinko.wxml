@@ -20,8 +20,13 @@
 
   <!-- bottom bar -->
   <view class="bottom-bar">
-    <view class="slot-config" bindtap="goSlotConfig">
-      <text class="config-btn">配置槽位</text>
+    <view class="bottom-btns">
+      <view class="slot-config" bindtap="goSlotConfig">
+        <text class="config-btn">配置槽位</text>
+      </view>
+      <view class="slot-config" bindtap="resetPegs">
+        <text class="reset-btn">重置钉子</text>
+      </view>
     </view>
     <view class="result-display" wx:if="{{lastResult}}">
       <text class="result-label">上次结果：</text>
