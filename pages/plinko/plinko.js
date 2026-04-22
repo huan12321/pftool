@@ -22,7 +22,6 @@ Page({
   data: {
     isCharging: false,
     powerPercent: 0,
-    showConfigModal: false,
     slots: ['选项A', '选项B', '选项C', '选项D', '选项E'],
     lastResult: '',
     hitCount: 0
@@ -62,9 +61,20 @@ Page({
   lastTime: 0,
 
   onLoad: function() {
+    this.reloadSlots()
+  },
+
+  onShow: function() {
+    this.reloadSlots()
+  },
+
+  reloadSlots: function() {
     var savedSlots = wx.getStorageSync('plinko_slots')
     if (savedSlots && savedSlots.length > 0) {
       this.setData({ slots: savedSlots })
+      if (this.ctx) {
+        this.buildSlots()
+      }
     }
   },
 
@@ -647,51 +657,7 @@ Page({
   },
 
   // ========== SLOT CONFIG ==========
-  showSlotConfig: function() {
-    this.setData({ showConfigModal: true })
-  },
-
-  hideSlotConfig: function() {
-    this.setData({ showConfigModal: false })
-  },
-
-  onSlotInput: function(e) {
-    var index = e.currentTarget.dataset.index
-    var value = e.detail.value
-    var slots = this.data.slots.slice()
-    slots[index] = value
-    this.setData({ slots: slots })
-  },
-
-  addSlot: function() {
-    if (this.data.slots.length >= 10) {
-      wx.showToast({ title: '最多10个槽位', icon: 'none' })
-      return
-    }
-    var slots = this.data.slots.concat(['新选项'])
-    this.setData({ slots: slots })
-  },
-
-  deleteSlot: function(e) {
-    var index = e.currentTarget.dataset.index
-    if (this.data.slots.length <= 2) {
-      wx.showToast({ title: '至少需要2个槽位', icon: 'none' })
-      return
-    }
-    var slots = this.data.slots.slice()
-    slots.splice(index, 1)
-    this.setData({ slots: slots })
-  },
-
-  saveSlots: function() {
-    var slots = this.data.slots.filter(function(s) { return s.trim() !== '' })
-    if (slots.length < 2) {
-      wx.showToast({ title: '至少需要2个槽位', icon: 'none' })
-      return
-    }
-    this.setData({ slots: slots, showConfigModal: false })
-    wx.setStorageSync('plinko_slots', slots)
-    this.buildSlots()
-    wx.showToast({ title: '已保存', icon: 'success' })
+  goSlotConfig: function() {
+    wx.navigateTo({ url: '/pages/plinko-config/plinko-config' })
   }
 })

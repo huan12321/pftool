@@ -1,0 +1,17 @@
+<view class="config-page">
+  <view class="config-header">
+    <text class="config-title">自定义槽位名称</text>
+    <text class="config-hint">2~10个槽位，修改后点击保存</text>
+  </view>
+  <view class="slot-list">
+    <view class="slot-row" wx:for="{{slots}}" wx:key="index">
+      <text class="slot-index">{{index + 1}}</text>
+      <input class="slot-input" value="{{item}}" bindinput="onInput" data-index="{{index}}" placeholder="输入名称" />
+      <view class="slot-del" wx:if="{{slots.length > 2}}" bindtap="deleteSlot" data-index="{{index}}">删除</view>
+    </view>
+  </view>
+  <view class="config-actions">
+    <button class="btn-add" wx:if="{{slots.length < 10}}" bindtap="addSlot">+ 添加槽位</button>
+    <button class="btn-save" bindtap="saveSlots">保存并返回</button>
+  </view>
+</view>

@@ -20,35 +20,12 @@
 
   <!-- bottom bar -->
   <view class="bottom-bar">
-    <view class="slot-config" bindtap="showSlotConfig">
+    <view class="slot-config" bindtap="goSlotConfig">
       <text class="config-btn">配置槽位</text>
     </view>
     <view class="result-display" wx:if="{{lastResult}}">
       <text class="result-label">上次结果：</text>
       <text class="result-value">{{lastResult}}</text>
-    </view>
-  </view>
-
-  <!-- slot config modal -->
-  <view class="modal-mask" wx:if="{{showConfigModal}}" bindtap="hideSlotConfig">
-    <view class="modal-content" catchtap="" catchtouchmove="">
-      <view class="modal-header">
-        <text class="modal-title">自定义槽位</text>
-        <text class="modal-close" bindtap="hideSlotConfig">✕</text>
-      </view>
-      <scroll-view scroll-y class="slot-list">
-        <view class="slot-item" wx:for="{{slots}}" wx:key="index">
-          <input class="slot-input" value="{{item}}" 
-            placeholder="输入槽位名称" 
-            bindinput="onSlotInput" 
-            data-index="{{index}}" />
-          <view class="slot-delete" bindtap="deleteSlot" data-index="{{index}}">✕</view>
-        </view>
-      </scroll-view>
-      <view class="modal-actions">
-        <view class="btn btn-add" bindtap="addSlot">+ 添加槽位</view>
-        <view class="btn btn-save" bindtap="saveSlots">保存</view>
-      </view>
     </view>
   </view>
 </view>

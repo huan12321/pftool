@@ -5,7 +5,8 @@
     "pages/history/history",
     "pages/seasons/seasons",
     "pages/record/record",
-    "pages/plinko/plinko"
+    "pages/plinko/plinko",
+    "pages/plinko-config/plinko-config"
   ],
   "window": {
     "backgroundTextStyle": "light",
