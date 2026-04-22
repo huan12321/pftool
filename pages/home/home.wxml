@@ -18,11 +18,11 @@
       <text class="card-desc">日常技能记录</text>
     </view>
     
-    <!-- 可以添加更多功能卡片 -->
-    <view class="function-card" bindtap="goToOther">
-      <image class="card-icon" src="/images/other-icon.png" mode="aspectFit"></image>
-      <text class="card-title">其他功能</text>
-      <text class="card-desc">待开发</text>
+    <!-- 弹珠抽奖 -->
+    <view class="function-card plinko-card" bindtap="goToPlinko">
+      <text class="card-icon-text">🎱</text>
+      <text class="card-title">弹珠抽奖</text>
+      <text class="card-desc">弹珠掉落，随机抽签</text>
     </view>
   </view>
 </view>

@@ -51,6 +51,11 @@
   margin-bottom: 30rpx;
 }
 
+.card-icon-text {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
 .card-title {
   font-size: 36rpx;
   font-weight: bold;
@@ -74,7 +79,7 @@
   border-left: 8rpx solid #4ecdc4;
 }
 
-/* 其他主题样式 */
+/* 弹珠主题样式 */
 .function-card:nth-child(3) {
-  border-left: 8rpx solid #ffe66d;
+  border-left: 8rpx solid #9b59b6;
 }
