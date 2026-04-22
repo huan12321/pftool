@@ -940,13 +940,13 @@ exportToFile(csvContent, fileName) {
       extension: ['.csv'],
       success: res => {
         const tempFilePath = res.tempFiles[0].path;
+        const tempFileName = res.tempFiles[0].name;
         const fs = wx.getFileSystemManager();
-        
         fs.readFile({
           filePath: tempFilePath,
           encoding: 'utf8',
           success: res => {
-            this.parseAndImportCSV(res.data);
+            this.parseAndImportCSV(res.data,tempFileName.replace(/\.csv$/i, ''));
           },
           fail: err => {
             console.error('读取文件失败', err);
@@ -968,7 +968,7 @@ exportToFile(csvContent, fileName) {
   },
 
   // 解析并导入CSV数据
-  parseAndImportCSV(csvData) {
+  parseAndImportCSV(csvData,tempFileName) {
     const lines = csvData.split('\n');
     if (lines.length < 2) {
       wx.showToast({
@@ -983,12 +983,13 @@ exportToFile(csvContent, fileName) {
     
     const seasonsMap = {};
     const recordsMap = {};
-    
+    seasonId = Date.now().toString();
+    seasonName = tempFileName;
+    initialScore = lines[1].split(',')[1];
+    createTime = lines[1].split(',')[0];
     lines.forEach(line => {
       if (!line.trim()) return;
-      
-      const [seasonId, seasonName, initialScore, recordId, score, time] = line.split(',');
-      
+      const [time,score] = line.split(',');
       if (!seasonsMap[seasonId]) {
         seasonsMap[seasonId] = {
           id: seasonId,
@@ -997,7 +998,7 @@ exportToFile(csvContent, fileName) {
           createTime: new Date().toISOString()
         };
       }
-      
+      recordId =  new Date(time).getTime().toString();
       if (recordId && score && time) {
         if (!recordsMap[seasonId]) {
           recordsMap[seasonId] = [];
@@ -1066,7 +1067,5 @@ exportToFile(csvContent, fileName) {
       }
     });
   }
-  
-  // 其他方法保持不变...
-  // ... (保持原有的 previewFile, shareFileToFriend 等方法)
+
 })

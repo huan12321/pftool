@@ -1,0 +1,337 @@
+/* 通用样式 */
+.record-container {
+  padding: 20rpx 30rpx 100rpx;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.back-home {
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.back-text {
+  font-size: 28rpx;
+  color: #4ecdc4;
+  font-weight: bold;
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.record-count,
+.project-count {
+  font-size: 26rpx;
+  color: #888;
+}
+
+/* 修复表单样式部分 */
+.record-form {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+
+.form-item {
+  margin-bottom: 40rpx;
+  position: relative; /* 添加相对定位 */
+}
+
+.form-label {
+  display: block;
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  font-weight: 500;
+}
+
+/* 修复选择器样式 */
+.form-picker {
+  background: #f8f9fa;
+  border-radius: 12rpx;
+  padding: 25rpx 30rpx; /* 统一内边距 */
+  display: block;
+  min-height: 80rpx; /* 设置最小高度与输入框一致 */
+  box-sizing: border-box;
+}
+
+.picker-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 30rpx; /* 确保内容区域有足够高度 */
+}
+
+.picker-text {
+  font-size: 30rpx;
+  color: #333;
+  line-height: 30rpx; /* 确保文字垂直居中 */
+}
+
+.picker-arrow {
+  font-size: 24rpx;
+  color: #999;
+}
+/* 修复输入框样式 */
+.form-input {
+  background: #f8f9fa;
+  border-radius: 12rpx;
+  padding: 25rpx 30rpx; /* 增加左右内边距 */
+  font-size: 30rpx;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box; /* 确保宽度计算正确 */
+  min-height: 80rpx; /* 设置最小高度 */
+  line-height: 30rpx; /* 设置行高，使文字垂直居中 */
+  display: block; /* 确保块级显示 */
+}
+
+/* 特别针对时长输入框的优化 */
+.form-item:nth-child(3) .form-input {
+  font-size: 32rpx; /* 稍微调大字体 */
+  font-weight: 500; /* 加粗 */
+}
+
+/* 提交按钮保持原有样式 */
+.submit-btn {
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  color: white;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  height: 90rpx;
+  line-height: 90rpx;
+  margin-top: 20rpx;
+  box-shadow: 0 5rpx 20rpx rgba(78, 205, 196, 0.3);
+  width: 100%; /* 确保按钮宽度100% */
+}
+
+.submit-btn[disabled] {
+  background: #cccccc;
+  box-shadow: none;
+}
+
+/* 最近记录样式 */
+.recent-records {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60rpx 0;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.record-item {
+  background: #f8f9fa;
+  border-radius: 15rpx;
+  padding: 30rpx;
+  border-left: 6rpx solid #4ecdc4;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.project-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.record-date {
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+.record-details {
+  margin-bottom: 20rpx;
+}
+
+.duration {
+  font-size: 28rpx;
+  color: #4ecdc4;
+  font-weight: 500;
+  margin-right: 30rpx;
+}
+
+.remark {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.record-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1rpx solid #eee;
+  padding-top: 20rpx;
+}
+
+.record-time {
+  font-size: 24rpx;
+  color: #aaa;
+}
+
+.delete-btn {
+  font-size: 26rpx;
+  color: #ff6b6b;
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* 项目管理样式 */
+.project-management {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+
+.add-project {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+}
+
+.project-input {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 12rpx;
+  padding: 25rpx;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.add-btn {
+  background: #4ecdc4;
+  color: white;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 40rpx;
+  min-width: 150rpx;
+}
+
+.add-btn[disabled] {
+  background: #cccccc;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25rpx;
+}
+
+.project-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx;
+  background: #f8f9fa;
+  border-radius: 15rpx;
+  border-left: 6rpx solid #ff6b6b;
+}
+
+.project-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.project-index {
+  font-size: 28rpx;
+  color: #999;
+  width: 40rpx;
+}
+
+.project-name-text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  flex: 1;
+}
+
+.project-record-count {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.project-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  background: rgba(78, 205, 196, 0.1);
+  color: #4ecdc4;
+}
+
+.delete-project-btn {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+}
+
+.edit-btn {
+  background: rgba(255, 230, 109, 0.1);
+  color: #e6b400;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .record-container {
+    padding: 15rpx 20rpx 80rpx;
+  }
+  
+  .record-form,
+  .recent-records,
+  .project-management {
+    padding: 30rpx;
+  }
+}
+
+.picker-hint {
+  display: block;
+  font-size: 24rpx;
+  color: #ff6b6b;
+  margin-top: 10rpx;
+}

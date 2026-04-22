@@ -1,0 +1,152 @@
+<view class="record-container">
+  <!-- 返回主页按钮 -->
+  <view class="back-home" bindtap="backToHome">
+    <text class="back-text">← 返回主页</text>
+  </view>
+
+  <!-- 记录表单部分 -->
+  <view class="record-form">
+    <text class="section-title">添加新记录</text>
+    
+    <view class="form-item">
+      <text class="form-label">项目名称</text>
+      <picker 
+        range="{{projectList}}" 
+        range-key="name" 
+        value="{{selectedProjectIndex}}" 
+        bindchange="onProjectChange"
+        class="form-picker"
+      >
+        <view class="picker-view">
+          <text class="picker-text">
+            {{selectedProject ? selectedProject.name : (projectList.length > 0 ? '请选择项目' : '请先添加项目')}}
+          </text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+      <text wx:if="{{projectList.length === 0}}" class="picker-hint">
+        请先在下方"项目管理"中添加项目
+      </text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">记录时间</text>
+      <picker 
+        mode="date" 
+        value="{{selectedDate}}" 
+        start="2020-01-01" 
+        end="{{today}}" 
+        bindchange="onDateChange"
+        class="form-picker"
+      >
+        <view class="picker-view">
+          <text class="picker-text">{{selectedDate}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">时长(分钟)</text>
+      <input 
+        type="number" 
+        value="{{duration}}" 
+        placeholder="请输入时长" 
+        bindinput="onDurationInput"
+        class="form-input"
+        maxlength="4"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">备注</text>
+      <input 
+        type="text" 
+        value="{{remark}}" 
+        placeholder="选填" 
+        bindinput="onRemarkInput"
+        class="form-input"
+        maxlength="50"
+      />
+    </view>
+
+    <button class="submit-btn" bindtap="submitRecord" disabled="{{!canSubmit}}">添加记录</button>
+  </view>
+
+  <!-- 最近记录部分 -->
+  <view class="recent-records">
+    <view class="section-header">
+      <text class="section-title">最近记录</text>
+      <text class="record-count">共{{totalRecords}}条记录</text>
+    </view>
+    
+    <view wx:if="{{recentRecords.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无记录，开始添加第一条记录吧</text>
+    </view>
+
+    <view wx:else class="records-list">
+      <view wx:for="{{recentRecords}}" wx:key="index" class="record-item">
+        <view class="record-header">
+          <text class="project-name">{{item.projectName}}</text>
+          <text class="record-date">{{item.date}}</text>
+        </view>
+        <view class="record-details">
+          <text class="duration">时长: {{item.duration}}分钟</text>
+          <text wx:if="{{item.remark}}" class="remark">备注: {{item.remark}}</text>
+        </view>
+        <view class="record-actions">
+          <text class="record-time">{{item.createTime}}</text>
+          <text class="delete-btn" data-index="{{index}}" bindtap="deleteRecord">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 项目管理部分 -->
+  <view class="project-management">
+    <view class="section-header">
+      <text class="section-title">项目管理</text>
+      <text class="project-count">{{projectList.length}}个项目</text>
+    </view>
+
+    <!-- 添加新项目 -->
+    <view class="add-project">
+      <input 
+        type="text" 
+        value="{{newProjectName}}" 
+        placeholder="输入新项目名称" 
+        bindinput="onNewProjectInput"
+        class="project-input"
+        maxlength="20"
+      />
+      <button class="add-btn" bindtap="addProject" disabled="{{!newProjectName}}">添加</button>
+    </view>
+
+    <!-- 修改原来的空状态提示 -->
+    <view wx:if="{{projectList.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无项目，请先添加项目才能开始记录</text>
+    </view>
+
+    <view wx:else class="projects-list">
+      <view wx:for="{{projectList}}" wx:key="index" class="project-item">
+        <view class="project-info">
+          <text class="project-index">{{index + 1}}.</text>
+          <text class="project-name-text">{{item.name}}</text>
+          <text class="project-record-count">{{item.recordCount}}条记录</text>
+        </view>
+        <view class="project-actions">
+          <text
+            class="action-btn edit-btn" 
+            data-index="{{index}}" 
+            bindtap="editProject"
+          >编辑</text>
+          <text
+            class="action-btn delete-project-btn" 
+            data-index="{{index}}" 
+            bindtap="deleteProject"
+          >删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

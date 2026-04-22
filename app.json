@@ -1,8 +1,10 @@
 {
   "pages": [
+    "pages/home/home",
     "pages/index/index",
     "pages/history/history",
-    "pages/seasons/seasons"
+    "pages/seasons/seasons",
+    "pages/record/record"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -11,6 +13,7 @@
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
+    "custom": false,
     "list": [
       {
         "pagePath": "pages/index/index",

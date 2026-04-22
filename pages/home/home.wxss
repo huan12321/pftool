@@ -1,0 +1,80 @@
+.home-container {
+  padding: 40rpx;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+
+.welcome-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.welcome-subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.function-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.function-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.function-card:active {
+  transform: translateY(-5rpx);
+  box-shadow: 0 15rpx 40rpx rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.card-desc {
+  font-size: 26rpx;
+  color: #888;
+  text-align: center;
+}
+
+/* Pokémon 主题样式 */
+.function-card:nth-child(1) {
+  border-left: 8rpx solid #ff6b6b;
+}
+
+/* 记录主题样式 */
+.function-card:nth-child(2) {
+  border-left: 8rpx solid #4ecdc4;
+}
+
+/* 其他主题样式 */
+.function-card:nth-child(3) {
+  border-left: 8rpx solid #ffe66d;
+}

@@ -1,3 +1,7 @@
+<!-- 在页面顶部添加返回按钮 -->
+<view class="back-home" bindtap="backToHome">
+  <text class="back-text">← 返回主页</text>
+</view>
 <view class="container">
   <view class="season-selector">
     <picker value="{{currentSeasonId}}" range="{{seasons}}" range-key="name" bindchange="onSeasonChange">

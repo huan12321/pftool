@@ -30,6 +30,15 @@ Page({
     this.calculateWinStreak(); // 每次页面显示时重新计算
   },
 
+    /**
+   * 返回主页
+   */
+  backToHome: function() {
+    wx.reLaunch({
+      url: '/pages/home/home'
+    });
+  },
+
   // 从历史记录计算连胜信息
   calculateWinStreak() {
     if (!this.data.currentSeason) {
