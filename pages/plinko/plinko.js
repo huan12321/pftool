@@ -483,26 +483,10 @@ Page({
     // slingshot: launch direction is OPPOSITE to pull direction
     // pullDx/pullDy are screen pixels, convert to world velocity
     var maxPull = 80
-    var launchSpeed = 0.3 + power * 1.2  // m/s
-    // reverse direction (pull back = launch forward)
-    var dirX = -pullDx / maxPull
-    var dirY = -pullDy / maxPull
-    // normalize
-    var dirLen = Math.sqrt(dirX * dirX + dirY * dirY)
-    if (dirLen < 0.01) dirLen = 0.01
-    dirX /= dirLen
-    dirY /= dirLen
-
-    // ensure always launches downward (dirY > 0)
-    if (dirY < 0.1) dirY = 0.1
-    dirLen = Math.sqrt(dirX * dirX + dirY * dirY)
-    dirX /= dirLen
-    dirY /= dirLen
-
-    // convert screen direction to world velocity
-    // screen X maps to world X, screen Y maps to world Y
-    var worldVx = dirX * launchSpeed * 0.15  // scale down horizontal
-    var worldVy = launchSpeed * 0.5            // mainly gravity driven
+    var launchSpeed = 0.3 + power * 1.2
+    var horizontalRatio = -pullDx / maxPull
+    var worldVx = horizontalRatio * launchSpeed * 1.0
+    var worldVy = launchSpeed * 0.35
 
     this.ball = {
       x: BOARD_WIDTH / 2,
