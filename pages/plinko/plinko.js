@@ -24,7 +24,8 @@ Page({
     powerPercent: 0,
     showConfigModal: false,
     slots: ['选项A', '选项B', '选项C', '选项D', '选项E'],
-    lastResult: ''
+    lastResult: '',
+    hitCount: 0
   },
 
   canvas: null,
@@ -569,6 +570,8 @@ Page({
         // then check velocity
         var vn = ball.vx * nx + ball.vy * ny
         if (vn < 0) {
+          this.data.hitCount++
+          this.setData({ hitCount: this.data.hitCount })
           ball.vx -= (1 + RESTITUTION) * vn * nx
           ball.vy -= (1 + RESTITUTION) * vn * ny
           var tx = -ny

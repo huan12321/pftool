@@ -5,6 +5,11 @@
     bindtouchend="onTouchEnd">
   </canvas>
 
+  <view class="hit-counter" wx:if="{{isRunning || hitCount > 0}}">
+    <text class="hit-count-number">{{hitCount}}</text>
+    <text class="hit-count-label">碰撞</text>
+  </view>
+
   <!-- power indicator -->
   <view class="power-indicator" wx:if="{{isCharging}}">
     <view class="power-bar">
