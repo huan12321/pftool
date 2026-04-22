@@ -164,11 +164,12 @@ Page({
 
   generateRandomPegs: function() {
     var minDist = (BALL_RADIUS + PEG_RADIUS) * 3.5
+    var edgePadding = BALL_RADIUS + PEG_RADIUS + 0.01
     var pegs = []
     var maxAttempts = 3000
     var target = 90 + Math.floor(Math.random() * 30)
     for (var i = 0; i < maxAttempts && pegs.length < target; i++) {
-      var x = Math.random() * BOARD_WIDTH
+      var x = edgePadding + Math.random() * (BOARD_WIDTH - 2 * edgePadding)
       var y = LAUNCH_HEIGHT + Math.random() * BOARD_HEIGHT
       var ok = true
       for (var j = 0; j < pegs.length; j++) {
