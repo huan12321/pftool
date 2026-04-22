@@ -163,25 +163,50 @@ Page({
   },
 
   generateRandomPegs: function() {
-    var minDist = (BALL_RADIUS + PEG_RADIUS) * 3.5
-    var edgePadding = BALL_RADIUS + PEG_RADIUS + 0.01
+    var SAFE_DIST = 2 * PEG_RADIUS + 2.5 * BALL_RADIUS
+    var PAIR_DIST = 2 * PEG_RADIUS + 0.3 * BALL_RADIUS
+    var PAIR_PROB = 0.2
+    var PAIR_OFFSETS = [
+      { dx: 0, dy: PAIR_DIST },
+      { dx: 0, dy: -PAIR_DIST },
+      { dx: PAIR_DIST * 0.7, dy: PAIR_DIST * 0.7 },
+      { dx: -PAIR_DIST * 0.7, dy: PAIR_DIST * 0.7 },
+      { dx: PAIR_DIST * 0.7, dy: -PAIR_DIST * 0.7 },
+      { dx: -PAIR_DIST * 0.7, dy: -PAIR_DIST * 0.7 }
+    ]
+    var wallUnsafeNear = PEG_RADIUS + BALL_RADIUS
+    var wallUnsafeFar = PEG_RADIUS + 2 * BALL_RADIUS
     var pegs = []
     var maxAttempts = 3000
     var target = 90 + Math.floor(Math.random() * 30)
-    for (var i = 0; i < maxAttempts && pegs.length < target; i++) {
-      var x = edgePadding + Math.random() * (BOARD_WIDTH - 2 * edgePadding)
-      var y = LAUNCH_HEIGHT + Math.random() * BOARD_HEIGHT
-      var ok = true
-      for (var j = 0; j < pegs.length; j++) {
-        var dx = x - pegs[j].x
-        var dy = y - pegs[j].y
-        if (dx * dx + dy * dy < minDist * minDist) {
-          ok = false
-          break
-        }
+    var isWallSafe = function(px) {
+      var dl = px
+      var dr = BOARD_WIDTH - px
+      return !((dl > wallUnsafeNear && dl < wallUnsafeFar) || (dr > wallUnsafeNear && dr < wallUnsafeFar))
+    }
+    var checkDist = function(px, py) {
+      for (var k = 0; k < pegs.length; k++) {
+        var ddx = px - pegs[k].x
+        var ddy = py - pegs[k].y
+        if (ddx * ddx + ddy * ddy < SAFE_DIST * SAFE_DIST) return false
       }
-      if (ok) {
-        pegs.push({ x: x, y: y, row: 0, col: pegs.length })
+      return true
+    }
+    for (var i = 0; i < maxAttempts && pegs.length < target; i++) {
+      var x = Math.random() * BOARD_WIDTH
+      if (!isWallSafe(x)) continue
+      var y = LAUNCH_HEIGHT + Math.random() * BOARD_HEIGHT
+      if (!checkDist(x, y)) continue
+      pegs.push({ x: x, y: y, row: 0, col: pegs.length })
+      if (Math.random() < PAIR_PROB) {
+        var off = PAIR_OFFSETS[Math.floor(Math.random() * PAIR_OFFSETS.length)]
+        var px = x + off.dx
+        var py = y + off.dy
+        if (px >= 0 && px <= BOARD_WIDTH && py >= LAUNCH_HEIGHT && py <= LAUNCH_HEIGHT + BOARD_HEIGHT) {
+          if (isWallSafe(px) && checkDist(px, py)) {
+            pegs.push({ x: px, y: py, row: 0, col: pegs.length })
+          }
+        }
       }
     }
     this.pegs = pegs
