@@ -31,7 +31,7 @@
 
   <!-- slot config modal -->
   <view class="modal-mask" wx:if="{{showConfigModal}}" bindtap="hideSlotConfig">
-    <view class="modal-content" catchtap=" catchtouchmove="">
+    <view class="modal-content" catchtap="" catchtouchmove="">
       <view class="modal-header">
         <text class="modal-title">自定义槽位</text>
         <text class="modal-close" bindtap="hideSlotConfig">✕</text>
