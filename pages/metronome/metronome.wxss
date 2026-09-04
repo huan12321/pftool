@@ -1,0 +1,236 @@
+.metronome-container {
+  padding: 20rpx 30rpx 100rpx;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.back-home {
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.back-text {
+  font-size: 28rpx;
+  color: #4ecdc4;
+  font-weight: bold;
+}
+
+/* 节拍显示卡片 */
+.display-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 50rpx 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.beat-circle {
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(78, 205, 196, 0.4);
+}
+
+.beat-circle.accent {
+  background: linear-gradient(135deg, #ff6b6b 0%, #e05555 100%);
+  box-shadow: 0 10rpx 30rpx rgba(255, 107, 107, 0.4);
+}
+
+/* 通过交替动画类重启脉冲动画 */
+@keyframes pulse-a {
+  0% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-b {
+  0% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.beat-circle.pulse-a {
+  animation: pulse-a 0.12s ease-out;
+}
+
+.beat-circle.pulse-b {
+  animation: pulse-b 0.12s ease-out;
+}
+
+.beat-number {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.bpm-display {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 30rpx;
+}
+
+.bpm-value {
+  font-size: 72rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.bpm-unit {
+  font-size: 28rpx;
+  color: #888;
+  margin-left: 10rpx;
+}
+
+.beat-dots {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+}
+
+.beat-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: #e0e0e0;
+  transition: all 0.1s ease;
+}
+
+.beat-dot.dot-active {
+  background: #4ecdc4;
+  transform: scale(1.4);
+}
+
+.beat-dot.dot-active-accent {
+  background: #ff6b6b;
+  transform: scale(1.4);
+}
+
+/* 控制卡片通用样式 */
+.control-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+/* BPM调节 */
+.bpm-adjust {
+  display: flex;
+  align-items: center;
+}
+
+.adjust-btn {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background: #4ecdc4;
+  color: white;
+  font-size: 32rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adjust-btn:active {
+  opacity: 0.8;
+}
+
+.slider-wrapper {
+  flex: 1;
+  margin: 0 10rpx;
+}
+
+.tempo-mark {
+  text-align: center;
+  margin-top: 10rpx;
+}
+
+.tempo-text {
+  font-size: 26rpx;
+  color: #888;
+}
+
+/* 拍号选择 */
+.beats-options {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.beats-option {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 12rpx;
+  background: #f0f0f0;
+  color: #666;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.beats-option.beats-active {
+  background: #4ecdc4;
+  color: white;
+  font-weight: bold;
+}
+
+.beats-hint {
+  font-size: 24rpx;
+  color: #aaa;
+}
+
+/* 反馈开关 */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.switch-row:last-child {
+  margin-bottom: 0;
+}
+
+.switch-label {
+  font-size: 30rpx;
+  color: #333;
+}
+
+/* 开始/停止按钮 */
+.start-btn {
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
+  color: white;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 90rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  margin-top: 10rpx;
+}
+
+.start-btn.stop {
+  background: linear-gradient(135deg, #ff6b6b 0%, #e05555 100%);
+}
+
+.start-btn:active {
+  opacity: 0.85;
+}

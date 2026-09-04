@@ -15,6 +15,12 @@ Page({
     });
   },
 
+  goToMetronome: function() {
+    wx.navigateTo({
+      url: '/pages/metronome/metronome'
+    });
+  },
+
   goToOther: function() {
     wx.showToast({
       title: '功能开发中',

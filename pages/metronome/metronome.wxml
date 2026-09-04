@@ -1,0 +1,85 @@
+<view class="metronome-container">
+  <!-- 返回主页按钮 -->
+  <view class="back-home" bindtap="backToHome">
+    <text class="back-text">← 返回主页</text>
+  </view>
+
+  <!-- 节拍显示区 -->
+  <view class="display-card">
+    <view class="beat-circle {{playing ? (beatIndex % 2 === 0 ? 'pulse-a' : 'pulse-b') : ''}} {{beatIndex === 0 && playing ? 'accent' : ''}}">
+      <text class="beat-number">{{playing ? beatIndex + 1 : '♪'}}</text>
+    </view>
+
+    <view class="bpm-display">
+      <text class="bpm-value">{{bpm}}</text>
+      <text class="bpm-unit">BPM</text>
+    </view>
+
+    <view class="beat-dots">
+      <view
+        wx:for="{{beats}}"
+        wx:key="*this"
+        class="beat-dot {{index === beatIndex && playing ? (index === 0 ? 'dot-active-accent' : 'dot-active') : ''}}"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 速度控制区 -->
+  <view class="control-card">
+    <text class="card-title">速度</text>
+
+    <view class="bpm-adjust">
+      <view class="adjust-btn" bindtap="decreaseBpm">-5</view>
+      <view class="slider-wrapper">
+        <slider
+          min="40"
+          max="240"
+          step="1"
+          value="{{bpm}}"
+          activeColor="#4ecdc4"
+          block-size="24"
+          bindchange="onBpmChange"
+          bindchanging="onBpmChanging"
+        />
+      </view>
+      <view class="adjust-btn" bindtap="increaseBpm">+5</view>
+    </view>
+
+    <view class="tempo-mark">
+      <text class="tempo-text">{{tempoMark}}</text>
+    </view>
+  </view>
+
+  <!-- 拍号控制区 -->
+  <view class="control-card">
+    <text class="card-title">每小节拍数</text>
+    <view class="beats-options">
+      <view
+        wx:for="{{beatsOptions}}"
+        wx:key="*this"
+        class="beats-option {{beats === item ? 'beats-active' : ''}}"
+        data-beats="{{item}}"
+        bindtap="onBeatsChange"
+      >{{item}}拍</view>
+    </view>
+    <text class="beats-hint">第1拍为强拍，声音高亮提示</text>
+  </view>
+
+  <!-- 反馈开关区 -->
+  <view class="control-card">
+    <text class="card-title">提示方式</text>
+    <view class="switch-row">
+      <text class="switch-label">声音</text>
+      <switch checked="{{soundOn}}" color="#4ecdc4" bindchange="onSoundChange" />
+    </view>
+    <view class="switch-row">
+      <text class="switch-label">震动</text>
+      <switch checked="{{vibrateOn}}" color="#4ecdc4" bindchange="onVibrateChange" />
+    </view>
+  </view>
+
+  <!-- 开始/停止按钮 -->
+  <button class="start-btn {{playing ? 'stop' : ''}}" bindtap="togglePlay">
+    {{playing ? '停止' : '开始'}}
+  </button>
+</view>

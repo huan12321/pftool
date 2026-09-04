@@ -15,5 +15,11 @@
       <text class="card-title">日常记录</text>
       <text class="card-desc">日常技能记录</text>
     </view>
+
+    <view class="function-card" bindtap="goToMetronome">
+      <text class="card-icon-text">🥁</text>
+      <text class="card-title">节拍器</text>
+      <text class="card-desc">稳定节奏练习</text>
+    </view>
   </view>
 </view>

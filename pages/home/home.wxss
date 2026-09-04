@@ -78,3 +78,8 @@
 .function-card:nth-child(2) {
   border-left: 8rpx solid #4ecdc4;
 }
+
+/* 节拍器主题样式 */
+.function-card:nth-child(3) {
+  border-left: 8rpx solid #9b59b6;
+}
