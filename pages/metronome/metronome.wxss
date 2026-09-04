@@ -105,10 +105,56 @@
   font-size: 54rpx;
 }
 
-/* 待机时的音符图标放大 */
-.beat-number.note {
-  font-size: 90rpx;
-  font-weight: normal;
+/* 待机猫爪图标（CSS绘制，白色） */
+.paw-icon {
+  position: relative;
+  width: 100rpx;
+  height: 90rpx;
+}
+
+.paw-pad {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 58rpx;
+  height: 42rpx;
+  margin-left: -29rpx;
+  background: white;
+  border-radius: 30rpx 30rpx 26rpx 26rpx;
+}
+
+.paw-toe {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+
+.toe-1 {
+  width: 18rpx;
+  height: 20rpx;
+  left: 6rpx;
+  top: 22rpx;
+}
+
+.toe-2 {
+  width: 20rpx;
+  height: 24rpx;
+  left: 28rpx;
+  top: 8rpx;
+}
+
+.toe-3 {
+  width: 20rpx;
+  height: 24rpx;
+  right: 28rpx;
+  top: 8rpx;
+}
+
+.toe-4 {
+  width: 18rpx;
+  height: 20rpx;
+  right: 6rpx;
+  top: 22rpx;
 }
 
 .bpm-display {

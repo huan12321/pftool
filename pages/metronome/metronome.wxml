@@ -9,7 +9,14 @@
     <view class="display-left">
       <view class="beat-circle-slot">
         <view class="beat-circle {{playing ? (beatIndex % 2 === 0 ? 'pulse-a' : 'pulse-b') : ''}} {{playing ? (beatIndex === 0 ? 'accent' : 'weak') : ''}}">
-          <text class="beat-number {{playing ? '' : 'note'}}">{{playing ? beatIndex + 1 : '♪'}}</text>
+          <text wx:if="{{playing}}" class="beat-number">{{beatIndex + 1}}</text>
+          <view wx:else class="paw-icon">
+            <view class="paw-toe toe-1"></view>
+            <view class="paw-toe toe-2"></view>
+            <view class="paw-toe toe-3"></view>
+            <view class="paw-toe toe-4"></view>
+            <view class="paw-pad"></view>
+          </view>
         </view>
       </view>
 
