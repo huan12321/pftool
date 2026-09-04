@@ -1,6 +1,6 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "节拍器",
+  "navigationBarTitleText": "Tick",
   "enablePullDownRefresh": false,
   "backgroundColor": "#f5f7fa"
 }
