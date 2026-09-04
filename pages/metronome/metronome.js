@@ -41,7 +41,7 @@ Page({
    */
   onUnload() {
     this.stopPlay();
-    this.destroyAudioContext();
+    this.destroyTickPlayers();
   },
 
   /**
@@ -158,6 +158,7 @@ Page({
     const beats = parseInt(e.currentTarget.dataset.beats);
     if (this.data.beats === beats) return;
 
+    this.beatIndex = 0;
     this.setData({
       beats: beats,
       beatIndex: 0
@@ -172,7 +173,7 @@ Page({
   onSoundChange(e) {
     this.setData({ soundOn: e.detail.value }, () => {
       if (this.data.soundOn && this.data.playing) {
-        this.ensureAudioContext();
+        this.ensureTickPlayers();
       }
       this.saveSettings();
     });
@@ -203,15 +204,15 @@ Page({
    */
   startPlay() {
     if (this.data.soundOn) {
-      this.ensureAudioContext();
+      this.ensureTickPlayers();
     }
 
     this.playing = true;
+    this.beatIndex = 0;
     this.nextBeatTime = Date.now();
 
     this.setData({
-      playing: true,
-      beatIndex: 0
+      playing: true
     });
 
     this.tick();
@@ -224,6 +225,7 @@ Page({
     if (!this.playing) return;
 
     this.playing = false;
+    this.beatIndex = 0;
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -237,21 +239,24 @@ Page({
 
   /**
    * 触发一次节拍并调度下一次（基于绝对时间，自动修正漂移）
+   * this.beatIndex 为当前正在响的拍子，显示与声音保持同步
    */
   tick() {
     if (!this.playing) return;
 
-    const beatIndex = this.data.beatIndex;
+    const beatIndex = this.beatIndex;
     const isAccent = beatIndex === 0;
 
     this.triggerFeedback(isAccent);
 
+    this.setData({
+      beatIndex: beatIndex
+    });
+
+    this.beatIndex = (beatIndex + 1) % this.data.beats;
+
     const interval = 60000 / this.data.bpm;
     this.nextBeatTime += interval;
-
-    this.setData({
-      beatIndex: (beatIndex + 1) % this.data.beats
-    });
 
     const delay = Math.max(0, this.nextBeatTime - Date.now());
     this.timer = setTimeout(() => {
@@ -272,55 +277,55 @@ Page({
   },
 
   /**
-   * 确保 Web Audio 上下文可用
+   * 确保音效播放器已创建（InnerAudioContext 真机兼容性好）
    */
-  ensureAudioContext() {
-    if (this.audioCtx) return;
+  ensureTickPlayers() {
+    if (this.tickPlayer) return;
 
-    try {
-      this.audioCtx = wx.createWebAudioContext();
-    } catch (e) {
-      console.error('创建音频上下文失败:', e);
-      this.audioCtx = null;
-    }
+    this.tickPlayer = this.createTickPlayer('/pages/metronome/tick.wav');
+    this.accentPlayer = this.createTickPlayer('/pages/metronome/tick-accent.wav');
   },
 
   /**
-   * 销毁音频上下文
+   * 创建单个音效播放器
    */
-  destroyAudioContext() {
-    if (this.audioCtx) {
-      try {
-        this.audioCtx.close();
-      } catch (e) {
-        console.error('关闭音频上下文失败:', e);
+  createTickPlayer(src) {
+    const player = wx.createInnerAudioContext();
+    player.src = src;
+    player.obeyMuteSwitch = false;
+    player.onError((err) => {
+      console.error('音效播放失败:', err);
+    });
+    return player;
+  },
+
+  /**
+   * 销毁音效播放器
+   */
+  destroyTickPlayers() {
+    [this.tickPlayer, this.accentPlayer].forEach((player) => {
+      if (player) {
+        try {
+          player.destroy();
+        } catch (e) {
+          console.error('销毁播放器失败:', e);
+        }
       }
-      this.audioCtx = null;
-    }
+    });
+    this.tickPlayer = null;
+    this.accentPlayer = null;
   },
 
   /**
    * 播放一次滴答声（强拍高音，弱拍低音）
    */
   playTick(isAccent) {
-    if (!this.audioCtx) return;
+    const player = isAccent ? this.accentPlayer : this.tickPlayer;
+    if (!player) return;
 
     try {
-      const ctx = this.audioCtx;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const now = ctx.currentTime;
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(isAccent ? 1600 : 1000, now);
-
-      gain.gain.setValueAtTime(0.5, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.06);
+      player.stop();
+      player.play();
     } catch (e) {
       console.error('播放音效失败:', e);
     }

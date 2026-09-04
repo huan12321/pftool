@@ -15,33 +15,58 @@
   font-weight: bold;
 }
 
-/* 节拍显示卡片 */
+/* 节拍显示卡片：左侧节拍信息 + 右侧播放按钮 */
 .display-card {
   background: white;
   border-radius: 20rpx;
-  padding: 50rpx 40rpx;
+  padding: 40rpx;
   margin-bottom: 30rpx;
   box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.display-left {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* 固定高度占位，圆圈缩放不影响卡片高度 */
+.beat-circle-slot {
+  height: 170rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
 .beat-circle {
-  width: 220rpx;
-  height: 220rpx;
+  width: 170rpx;
+  height: 170rpx;
   border-radius: 50%;
   background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 30rpx;
   box-shadow: 0 10rpx 30rpx rgba(78, 205, 196, 0.4);
+  transition: width 0.15s ease, height 0.15s ease;
 }
 
 .beat-circle.accent {
-  background: linear-gradient(135deg, #ff6b6b 0%, #e05555 100%);
-  box-shadow: 0 10rpx 30rpx rgba(255, 107, 107, 0.4);
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
+  box-shadow: 0 10rpx 30rpx rgba(78, 205, 196, 0.4);
+}
+
+/* 剩余拍：黄色，尺寸略小 */
+.beat-circle.weak {
+  width: 140rpx;
+  height: 140rpx;
+  background: linear-gradient(135deg, #f7b731 0%, #e0a32e 100%);
+  box-shadow: 0 10rpx 30rpx rgba(247, 183, 49, 0.4);
 }
 
 /* 通过交替动画类重启脉冲动画 */
@@ -64,19 +89,36 @@
 }
 
 .beat-number {
-  font-size: 80rpx;
+  font-size: 60rpx;
   font-weight: bold;
   color: white;
+  transition: font-size 0.15s ease;
+}
+
+/* 强拍圆圈更大，数字同步放大 */
+.beat-circle.accent .beat-number {
+  font-size: 76rpx;
+}
+
+/* 弱拍圆圈更小，数字同步缩小 */
+.beat-circle.weak .beat-number {
+  font-size: 54rpx;
+}
+
+/* 待机时的音符图标放大 */
+.beat-number.note {
+  font-size: 90rpx;
+  font-weight: normal;
 }
 
 .bpm-display {
   display: flex;
   align-items: baseline;
-  margin-bottom: 30rpx;
+  margin-bottom: 24rpx;
 }
 
 .bpm-value {
-  font-size: 72rpx;
+  font-size: 60rpx;
   font-weight: bold;
   color: #333;
 }
@@ -90,7 +132,10 @@
 .beat-dots {
   display: flex;
   justify-content: center;
-  gap: 20rpx;
+}
+
+.beat-dot + .beat-dot {
+  margin-left: 20rpx;
 }
 
 .beat-dot {
@@ -102,12 +147,12 @@
 }
 
 .beat-dot.dot-active {
-  background: #4ecdc4;
+  background: #f7b731;
   transform: scale(1.4);
 }
 
 .beat-dot.dot-active-accent {
-  background: #ff6b6b;
+  background: #4ecdc4;
   transform: scale(1.4);
 }
 
@@ -170,8 +215,11 @@
 /* 拍号选择 */
 .beats-options {
   display: flex;
-  gap: 20rpx;
   margin-bottom: 20rpx;
+}
+
+.beats-option + .beats-option {
+  margin-left: 20rpx;
 }
 
 .beats-option {
@@ -215,22 +263,43 @@
   color: #333;
 }
 
-/* 开始/停止按钮 */
-.start-btn {
+/* 播放/停止圆形按钮（显示卡片右侧） */
+.play-btn {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
   background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
-  color: white;
-  font-size: 36rpx;
-  font-weight: bold;
-  border-radius: 90rpx;
-  height: 100rpx;
-  line-height: 100rpx;
-  margin-top: 10rpx;
+  box-shadow: 0 10rpx 30rpx rgba(78, 205, 196, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 0 30rpx;
+  flex-shrink: 0;
 }
 
-.start-btn.stop {
-  background: linear-gradient(135deg, #ff6b6b 0%, #e05555 100%);
+.play-btn.stop {
+  background: linear-gradient(135deg, #e0e0e0 0%, #cccccc 100%);
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.12);
 }
 
-.start-btn:active {
+.play-btn:active {
   opacity: 0.85;
+}
+
+/* 播放三角形（CSS绘制） */
+.icon-play {
+  width: 0;
+  height: 0;
+  border-top: 24rpx solid transparent;
+  border-bottom: 24rpx solid transparent;
+  border-left: 38rpx solid white;
+  margin-left: 10rpx;
+}
+
+/* 停止方块 */
+.icon-stop {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 6rpx;
+  background: white;
 }

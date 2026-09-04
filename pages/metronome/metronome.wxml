@@ -4,23 +4,32 @@
     <text class="back-text">← 返回主页</text>
   </view>
 
-  <!-- 节拍显示区 -->
+  <!-- 节拍显示区：左边显示节拍，右边播放按钮 -->
   <view class="display-card">
-    <view class="beat-circle {{playing ? (beatIndex % 2 === 0 ? 'pulse-a' : 'pulse-b') : ''}} {{beatIndex === 0 && playing ? 'accent' : ''}}">
-      <text class="beat-number">{{playing ? beatIndex + 1 : '♪'}}</text>
+    <view class="display-left">
+      <view class="beat-circle-slot">
+        <view class="beat-circle {{playing ? (beatIndex % 2 === 0 ? 'pulse-a' : 'pulse-b') : ''}} {{playing ? (beatIndex === 0 ? 'accent' : 'weak') : ''}}">
+          <text class="beat-number {{playing ? '' : 'note'}}">{{playing ? beatIndex + 1 : '♪'}}</text>
+        </view>
+      </view>
+
+      <view class="bpm-display">
+        <text class="bpm-value">{{bpm}}</text>
+        <text class="bpm-unit">BPM</text>
+      </view>
+
+      <view class="beat-dots">
+        <view
+          wx:for="{{beats}}"
+          wx:key="*this"
+          class="beat-dot {{index === beatIndex && playing ? (index === 0 ? 'dot-active-accent' : 'dot-active') : ''}}"
+        ></view>
+      </view>
     </view>
 
-    <view class="bpm-display">
-      <text class="bpm-value">{{bpm}}</text>
-      <text class="bpm-unit">BPM</text>
-    </view>
-
-    <view class="beat-dots">
-      <view
-        wx:for="{{beats}}"
-        wx:key="*this"
-        class="beat-dot {{index === beatIndex && playing ? (index === 0 ? 'dot-active-accent' : 'dot-active') : ''}}"
-      ></view>
+    <view class="play-btn {{playing ? 'stop' : ''}}" bindtap="togglePlay">
+      <view wx:if="{{!playing}}" class="icon-play"></view>
+      <view wx:else class="icon-stop"></view>
     </view>
   </view>
 
@@ -77,9 +86,4 @@
       <switch checked="{{vibrateOn}}" color="#4ecdc4" bindchange="onVibrateChange" />
     </view>
   </view>
-
-  <!-- 开始/停止按钮 -->
-  <button class="start-btn {{playing ? 'stop' : ''}}" bindtap="togglePlay">
-    {{playing ? '停止' : '开始'}}
-  </button>
 </view>
