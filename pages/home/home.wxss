@@ -78,8 +78,3 @@
 .function-card:nth-child(2) {
   border-left: 8rpx solid #4ecdc4;
 }
-
-/* 弹珠主题样式 */
-.function-card:nth-child(3) {
-  border-left: 8rpx solid #9b59b6;
-}

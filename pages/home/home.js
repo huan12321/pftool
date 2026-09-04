@@ -15,12 +15,6 @@ Page({
     });
   },
 
-  goToPlinko: function() {
-    wx.navigateTo({
-      url: '/pages/plinko/plinko'
-    });
-  },
-
   goToOther: function() {
     wx.showToast({
       title: '功能开发中',
