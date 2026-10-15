@@ -14,7 +14,7 @@ Page({
       { label: '-10', value: -10 }
     ],
     lastScore: 0,
-    changeValue: 0,
+    changeValue: null, // null 表示未选择任何变化
     displayScore: 0,
     winStreak: 0, // 当前连胜场数
     lastResult: null, // 上一局结果：'win'、'lose' 或 'draw'
@@ -200,7 +200,7 @@ Page({
         lastScore: currentScore,
         currentScore: currentScore,
         displayScore: currentScore,
-        changeValue: 0
+        changeValue: null
       });
 
       // 重新计算连胜信息
@@ -211,7 +211,7 @@ Page({
         lastScore: 0,
         currentScore: 0,
         displayScore: 0,
-        changeValue: 0,
+        changeValue: null,
         winStreak: 0,
         lastResult: null
       });
@@ -380,7 +380,7 @@ Page({
     this.setData({
       lastScore: this.data.displayScore,
       currentScore: this.data.displayScore,
-      changeValue: 0,
+      changeValue: null,
       currentTime: ''
     });
 

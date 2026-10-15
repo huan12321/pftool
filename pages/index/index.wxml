@@ -15,9 +15,9 @@
     <text class="title">当前分数</text>
     <view class="score-row">
       <text class="score">{{currentScore}}</text>
-      <view class="change-display" wx:if="{{changeValue !== 0}}">
-        <span class="change-text {{changeValue > 0 ? 'positive' : 'negative'}}">
-          {{changeValue > 0 ? '+' : ''}}{{changeValue}} = {{displayScore}}
+      <view class="change-display" wx:if="{{changeValue !== null}}">
+        <span class="change-text {{changeValue >= 0 ? 'positive' : 'negative'}}">
+          {{changeValue >= 0 ? '+' : ''}}{{changeValue}} = {{displayScore}}
         </span>
       </view>
     </view>
