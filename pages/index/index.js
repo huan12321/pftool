@@ -17,7 +17,7 @@ Page({
     changeValue: null, // null 表示未选择任何变化
     displayScore: 0,
     winStreak: 0, // 当前连胜场数
-    lastResult: null, // 上一局结果：'win'、'lose' 或 'draw'
+    lastResult: null, // 上一局结果：'win' 或 'lose'
     buttonConfig: '' // 快捷按钮配置字符串
   },
 
@@ -82,8 +82,8 @@ Page({
           // 遇到失败，终止计算
           break;
         }
-      } else if (currentRecord.score < prevRecord.score) {
-        // 失败
+      } else {
+        // 失败（分数不变也算输）
         if (lastResult === 'lose' || lastResult === null) {
           currentStreak = 0; // 对于失败，连胜重置为0
           lastResult = 'lose';
@@ -91,15 +91,6 @@ Page({
           // 遇到胜利，终止计算
           break;
         }
-      } else {
-        // 平局
-        if (lastResult === null) {
-          // 最新一局分数没有变化，不算胜利也不算失败
-          lastResult = 'draw';
-          break;
-        }
-        // 历史中的平局，不影响连胜
-        continue;
       }
     }
 
@@ -135,7 +126,7 @@ Page({
           streakCounts[i] = 1;
         }
         streakTypes[i] = 'win';
-      } else if (curr.score < prev.score) {
+      } else {
         if (streakTypes[i - 1] === 'lose') {
           streakCounts[i] = streakCounts[i - 1] + 1;
         } else {

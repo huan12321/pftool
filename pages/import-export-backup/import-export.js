@@ -208,7 +208,7 @@ Page({
           streakCounts[i] = 1;
         }
         streakTypes[i] = 'win';
-      } else if (curr.score < prev.score) {
+      } else {
         if (streakTypes[i - 1] === 'lose') {
           streakCounts[i] = streakCounts[i - 1] + 1;
         } else {

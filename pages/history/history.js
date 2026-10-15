@@ -410,7 +410,7 @@ calculateHourlyStats(records) {
       const prevRecord = sortedRecords[currentIndex - 1]; // 前一条记录
       if (prevRecord) {
         const isWin = record.score > prevRecord.score;
-        const isLose = record.score < prevRecord.score;
+        const isLose = record.score <= prevRecord.score; // 分数不变也算输
         
         stats[key].total++;
         if (isWin) stats[key].win++;
@@ -522,7 +522,7 @@ calculateStatsOverview(stats) {
           streakCounts[i] = 1;
         }
         streakTypes[i] = 'win';
-      } else if (curr.score < prev.score) {
+      } else {
         if (streakTypes[i - 1] === 'lose') {
           streakCounts[i] = streakCounts[i - 1] + 1;
         } else {

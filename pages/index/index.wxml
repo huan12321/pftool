@@ -26,7 +26,7 @@
       <text class="win-streak-text">当前连胜: {{winStreak}}场</text>
     </view>
     <view class="last-result-info" wx:if="{{lastResult !== null}}">
-      <text class="last-result-text">上一局: {{lastResult === 'win' ? '胜利' : (lastResult === 'draw' ? '平局' : '失败')}}</text>
+      <text class="last-result-text">上一局: {{lastResult === 'win' ? '胜利' : '失败'}}</text>
     </view>
   </view>
 
