@@ -375,6 +375,12 @@
   border: 1px solid #f53f3f;
 }
 
+.neutral {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #999;
+}
+
 
 .time-input-group {
   display: flex;

@@ -17,11 +17,13 @@ Page({
     changeValue: 0,
     displayScore: 0,
     winStreak: 0, // 当前连胜场数
-    lastResult: null // 上一局结果：'win' 或 'loss'
+    lastResult: null, // 上一局结果：'win'、'lose' 或 'draw'
+    buttonConfig: '' // 快捷按钮配置字符串
   },
 
   onLoad() {
     this.loadCurrentSeason();
+    this.loadButtonConfig();
     this.calculateWinStreak(); // 计算连胜信息
   },
 
@@ -90,7 +92,13 @@ Page({
           break;
         }
       } else {
-        // 平局，不影响连胜
+        // 平局
+        if (lastResult === null) {
+          // 最新一局分数没有变化，不算胜利也不算失败
+          lastResult = 'draw';
+          break;
+        }
+        // 历史中的平局，不影响连胜
         continue;
       }
     }
@@ -220,8 +228,8 @@ Page({
     let winValue = 10; // 默认值
     
     // 根据连胜情况计算分数
-    if (this.data.lastResult === 'loss' || this.data.lastResult === null) {
-      // 上一把为输或没有上一把，+10
+    if (this.data.lastResult !== 'win') {
+      // 上一把为输、平局或没有上一把，+10
       winValue = 10;
     } else {
       // 根据连胜场数计算
@@ -444,6 +452,49 @@ Page({
       currentSeason: seasons[seasonIndex]
     }, () => {
       this.onLoad();
+    });
+  },
+
+  // 加载快捷按钮配置
+  loadButtonConfig() {
+    const saved = wx.getStorageSync('operationButtonsConfig') || '+10,+13,+16,+19,+22,-10';
+    this.setData({
+      buttonConfig: saved,
+      operationButtons: this.parseButtonConfig(saved)
+    });
+  },
+
+  // 解析配置字符串为按钮数组
+  parseButtonConfig(str) {
+    if (!str) return [];
+    return str.split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(v => !isNaN(v) && v >= -10000 && v <= 10000)
+      .map(v => ({ label: v >= 0 ? `+${v}` : `${v}`, value: v }));
+  },
+
+  handleButtonConfigInput(e) {
+    this.setData({
+      buttonConfig: e.detail.value
+    });
+  },
+
+  confirmButtonConfig() {
+    const buttons = this.parseButtonConfig(this.data.buttonConfig);
+    if (buttons.length === 0) {
+      wx.showToast({
+        title: '请输入有效分数，如+10,+13,-10',
+        icon: 'none'
+      });
+      return;
+    }
+    wx.setStorageSync('operationButtonsConfig', this.data.buttonConfig.trim());
+    this.setData({
+      operationButtons: buttons
+    });
+    wx.showToast({
+      title: '按钮配置已更新',
+      icon: 'success'
     });
   }
 });

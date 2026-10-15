@@ -26,7 +26,7 @@
       <text class="win-streak-text">当前连胜: {{winStreak}}场</text>
     </view>
     <view class="last-result-info" wx:if="{{lastResult !== null}}">
-      <text class="last-result-text">上一局: {{lastResult === 'win' ? '胜利' : '失败'}}</text>
+      <text class="last-result-text">上一局: {{lastResult === 'win' ? '胜利' : (lastResult === 'draw' ? '平局' : '失败')}}</text>
     </view>
   </view>
 
@@ -68,7 +68,7 @@
         wx:key="index"
         data-value="{{item.value}}"
         bindtap="handleOperation"
-        class="op-btn {{item.value > 0 ? 'positive' : 'negative'}} {{changeValue === item.value ? 'active' : ''}}"
+        class="op-btn {{item.value > 0 ? 'positive' : (item.value < 0 ? 'negative' : 'neutral')}} {{changeValue === item.value ? 'active' : ''}}"
       >
         {{item.label}}
       </button>
@@ -91,4 +91,18 @@
   </view>
 
   <button class="save-btn" bindtap="saveRecord">保存记录</button>
+
+  <view class="button-config-section">
+    <text class="section-title">快捷按钮配置</text>
+    <view class="input-group">
+      <input 
+        type="text" 
+        placeholder="如: +1,+0,-1,-2" 
+        value="{{buttonConfig}}"
+        bindinput="handleButtonConfigInput"
+      />
+      <button bindtap="confirmButtonConfig" class="confirm-btn">确认</button>
+    </view>
+    <text class="time-format-hint">用英文逗号分隔多个分数，确认后快捷操作按钮按此显示</text>
+  </view>
 </view>
