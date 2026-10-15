@@ -36,7 +36,7 @@
   <view class="section-title">已创建赛季</view>
   
   <view class="seasons-list">
-    <view wx:for="{{seasons}}" wx:key="id" class="season-item {{item.selected ? 'selected' : ''}}">
+    <view wx:for="{{seasons}}" wx:key="id" class="season-item">
       
       <view class="season-info">
         <!-- 编辑模式 -->
@@ -57,13 +57,7 @@
         <!-- 显示模式 -->
         <view wx:else class="display-mode">
           <view class="season-header">
-            <view class="season-name">
-              <view class="season-selector">
-            <checkbox checked="{{item.selected}}" 
-                      bindtap="toggleSeasonSelection" 
-                      data-id="{{item.id}}" />
-            {{item.name}}</view>
-          </view>
+            <view class="season-name">{{item.name}}</view>
           </view>
           <view class="season-details">
             <view class="season-id" bindtap="copySeasonId" data-id="{{item.id}}">
@@ -119,34 +113,6 @@
     
     <view wx:if="{{seasons.length === 0}}" class="empty-hint">
       暂无赛季，请创建新赛季或导入数据
-    </view>
-  </view>
-
-    <!-- AI分析功能区域 -->
-    <view class="section-title">AI赛季分析</view>
-  
-  <view class="analysis-controls">
-    <view class="select-all">
-      <checkbox checked="{{allSelected}}" 
-                bindtap="toggleSelectAll" />
-      <text>全选</text>
-    </view>
-    
-    <button class="analyze-btn {{isAnalyzing ? 'disabled' : ''}}" 
-            bindtap="analyzeWithDeepSeek"
-            disabled="{{isAnalyzing}}">
-      {{isAnalyzing ? '分析中...' : 'AI分析选中赛季'}}
-    </button>
-  </view>
-
-  <!-- AI分析结果 -->
-  <view wx:if="{{aiAnalysisResult}}" id="ai-analysis-result" class="analysis-result">
-    <view class="result-header">
-      <text class="result-title">AI分析结果</text>
-      <button class="clear-btn" bindtap="clearAnalysisResult">清除</button>
-    </view>
-    <view class="result-content">
-      {{aiAnalysisResult}}
     </view>
   </view>
 </view>
